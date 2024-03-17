@@ -1,0 +1,22 @@
+[
+	{
+		"id": 1,
+		"img": "/HomeSlide/001.jpg"
+	},
+	{
+		"id": 2,
+		"img": "/HomeSlide/002.jpg"
+	},
+	{
+		"id": 3,
+		"img": "/HomeSlide/003.jpg"
+	},
+	{
+		"id": 4,
+		"img": "/HomeSlide/004.jpg"
+	},
+	{
+		"id": 5,
+		"img": "/HomeSlide/005.jpg"
+	}
+]
