@@ -29,7 +29,7 @@ export default function Navbar() {
 						</div>
 					</div>
 					<LinksWeb />
-					<BurgerButton isOpen={isOpen} onClick={toggleBurgerButton} />
+					{/* <BurgerButton isOpen={isOpen} onClick={toggleBurgerButton} /> */}
 				</div>
 			</div>
 		</nav>
