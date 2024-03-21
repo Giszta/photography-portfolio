@@ -1,9 +1,15 @@
 import React from "react";
 
-export default function BurgerButton({ isOpen, onClick }) {
+export default function BurgerButton({
+	isOpen,
+	onClick,
+}: {
+	isOpen: boolean;
+	onClick: React.MouseEventHandler<HTMLButtonElement>;
+}) {
 	return (
 		<button
-			className="h-10 w-10 bg-black rounded-3xl overflow-hidden flex justify-center  items-center"
+			className="flex md:hidden h-10 w-10 bg-black rounded-3xl overflow-hidden  justify-center  items-center"
 			onClick={onClick}
 		>
 			<div className="sr-only ">{isOpen ? "Close menu" : "Open menu"}</div>
