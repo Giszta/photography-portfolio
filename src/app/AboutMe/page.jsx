@@ -10,14 +10,14 @@ export default function AboutMe() {
 			<Navbar />
 			<NavbarMobile />
 			<h1 className="text-center text-4xl pt-32 pb-20"> O Mnie </h1>
-			<div className="flex justify-center items-center flex-wrap gap-x-20 gap-y-5">
+			<div className="flex justify-center items-center  gap-x-20 gap-y-5 max-w-7xl m-auto flex-wrap ">
 				<Image
-					className="max-w-md w-screen rounded-3xl"
+					className="max-w-md w-11/12 rounded-3xl mx-5"
 					src={AboutMePhoto}
 					alt="About me photo"
 					priority
 				/>
-				<span className="max-w-md w-screen">
+				<span className="max-w-2xl text-justify mx-5 ">
 					Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur
 					possimus facere non, error, sapiente dolores aliquid laborum quam et
 					dicta nesciunt autem voluptas voluptate ea perspiciatis a doloremque
