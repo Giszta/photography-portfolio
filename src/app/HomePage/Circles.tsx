@@ -4,7 +4,7 @@ import QuoteCircle from "./QuoteCircle";
 
 export default function Circles() {
 	return (
-		<div>
+		<div className="flex justify-center top-0 items-center h-screen">
 			<AuthorCircle />
 			<QuoteCircle />
 		</div>

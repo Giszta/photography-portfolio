@@ -2,8 +2,8 @@ import React from "react";
 
 export default function AuthorCircle() {
 	return (
-		<div className="bg-black absolute flex w-40 h-40 rounded-full justify-center items-center top-1/2 left-1/2">
-			<div className="text-white text-center align-middle">AuthorCircle</div>;
+		<div className="bg-black bg-opacity-60 relative left-3 flex w-52 h-52 rounded-full justify-center items-center  animate-fade-right animate-ease-in">
+			<div className="text-white text-center px-5 ">Terence Donovan</div>;
 		</div>
 	);
 }
