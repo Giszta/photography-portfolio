@@ -81,8 +81,8 @@
 
 	.photo {
 		object-fit: fill;
-		/* height: 160px;
-		width: 300px; */
+		height: 180px;
+		width: 300px;
 		cursor: pointer;
 		transform: scale(1);
 		transition: all 0.5s;
