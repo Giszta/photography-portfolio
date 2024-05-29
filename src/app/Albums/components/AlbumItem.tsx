@@ -1,16 +1,23 @@
 import Image from "next/image";
 import { Photo } from "@/types/Gallery_Types";
 
-export default function AlbumItem({ albumCover }: { albumCover: Photo }) {
+//{ albumCover }: { albumCover: Photo }
+interface AlbumItemType {
+	title: string;
+	src: string;
+	tag: string[];
+}
+
+export default function AlbumItem({ title, src, tag }: AlbumItemType) {
 	return (
-		<div className="">
-			<h1 className="text-center pb-5">{albumCover.title}</h1>
+		<div>
+			<h1 className="text-center ">{title}</h1>
 			<div>
 				<div className="frames">
 					<div className="frame">
 						<Image
 							className="min-w-sm photo"
-							src={albumCover.src}
+							src={src}
 							width={300}
 							height={300}
 							alt="Album Cover"
