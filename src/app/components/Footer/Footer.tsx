@@ -22,26 +22,26 @@ export default function Footer() {
 			<div className=" socials flex flex-row gap-4 items-center">
 				<Link href="https://www.shutterstock.com/pl/g/Roman+Giszter?rid=290584745">
 					<ShutterstockIcon
-						className="text-white hover:text-sky-500 w-6 h-6"
+						className="text-white  w-6 h-6 hover:text-sky-500 duration-500"
 						alt="Shutterstock Icon"
 					/>
 				</Link>
 
 				<Link href="https://www.instagram.com/romangiszter/">
 					<InstagramIcon
-						className="text-white hover:text-sky-500 w-5 h-5"
+						className="text-white hover:text-sky-500 duration-500 w-5 h-5"
 						alt="Instagram Icon"
 					/>
 				</Link>
 				<Link href="https://www.facebook.com/profile.php?id=100007263227928">
 					<FacebookIcon
-						className="text-white hover:text-sky-500 w-5 h-5"
+						className="text-white hover:text-sky-500 duration-500 w-5 h-5"
 						alt="Facebook Icon"
 					/>
 				</Link>
 				<a href="mailto:kontakt@fotoroman.pl">
 					<EmailIcon
-						className="text-white hover:text-sky-500 w-6 h-6"
+						className="text-white hover:text-sky-500 duration-500 w-6 h-6"
 						alt="Email Icon"
 					/>
 				</a>

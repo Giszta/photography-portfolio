@@ -1,16 +1,30 @@
+"use client";
 import Image from "next/image";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import NavbarMobile from "../components/Navbar/Navbar-mobile";
 import AboutMePhoto from "../assets/AboutMe/about me.jpg";
-
+import { motion } from "framer-motion";
 export default function AboutMe() {
 	return (
-		<main className="">
+		<main>
 			<Navbar />
 			<NavbarMobile />
-			<h1 className="text-center text-4xl pt-32 pb-10"> O Mnie </h1>
-			<div className="flex justify-center items-center gap-x-20 gap-y-5 max-w-7xl m-auto mb-5 flex-wrap ">
+			<motion.h1
+				initial={{ opacity: 0, scale: 0.5 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.5 }}
+				className="text-center text-4xl pt-32 pb-10"
+			>
+				{" "}
+				O Mnie{" "}
+			</motion.h1>
+			<motion.div
+				initial={{ opacity: 0, scale: 0.5 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ delay: 0.5, duration: 0.5 }}
+				className="flex justify-center items-center gap-x-20 gap-y-5 max-w-7xl m-auto mb-5 flex-wrap "
+			>
 				<span className="max-w-2xl text-justify mx-5 block indent-0.5">
 					<p className="indent-5">
 						Cześć! Nazywam się Romek, a fotografia turystyczna to moja wielka
@@ -35,8 +49,13 @@ export default function AboutMe() {
 					alt="About me photo"
 					priority
 				/>
-			</div>
-			<div className="flex justify-center items-center gap-x-20 gap-y-5 max-w-7xl m-auto mb-5 flex-wrap ">
+			</motion.div>
+			<motion.div
+				initial={{ opacity: 0, scale: 0.5 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ delay: 1, duration: 0.5 }}
+				className="flex justify-center items-center gap-x-20 gap-y-5 max-w-7xl m-auto mb-5 flex-wrap "
+			>
 				<Image
 					className="max-w-md w-11/12 rounded-3xl mx-5"
 					src={AboutMePhoto}
@@ -66,7 +85,7 @@ export default function AboutMe() {
 					<p className="signature">Roman Giszter</p>
 					<br />
 				</span>
-			</div>
+			</motion.div>
 			<Footer />
 		</main>
 	);
