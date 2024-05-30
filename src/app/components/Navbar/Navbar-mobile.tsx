@@ -32,7 +32,7 @@ const navbar = {
 	},
 };
 
-export default function NavbarMobile() {
+export default function NM() {
 	const pathname = usePathname();
 	const containerRef = useRef(null);
 	const { height } = useDimensions(containerRef);

@@ -1,11 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import EmailIcon from "../../../../public/email-icon.svg";
 import FacebookIcon from "../../../../public/facebook-icon.svg";
 import InstagramIcon from "../../../../public/instagram-icon.svg";
 import ShutterstockIcon from "../../../../public/shutterstock-icon.svg";
-import Mailto from "react-mailto";
 
 function getDate() {
 	const today = new Date();
