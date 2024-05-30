@@ -8,7 +8,7 @@ const AlbumFilterButton = ({ name, onClick, isSelected }) => {
 	return (
 		<button
 			onClick={() => onClick(name)}
-			className={`border-4 hover:border-black rounded-full px-6 py-1 text-xl cursor-pointer bg-black bg-shade bg-opacity-60 ${buttonStyles}`}
+			className={`shadow-lg shadow-stone-500/50 border-4 hover:border-black rounded-full px-6 py-1 text-xl cursor-pointer bg-black bg-shade bg-opacity-60 ${buttonStyles}`}
 		>
 			{name}
 		</button>
