@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar/Navbar";
 import AlbumItem from "./components/AlbumItem";
 import AlbumFilterButton from "./components/AlbumFilterButton";
 import { useState } from "react";
-
 const allAlbumPhotos = [
 	[
 		{
@@ -386,10 +385,10 @@ export default function Albums() {
 	const arrayOfUniqueTags = Array.from(new Set(arrayOfTags.flat()));
 
 	return (
-		<main className="bg-stone-200">
+		<main className="">
 			<Navbar />
-			<h1 className="text-center text-4xl pt-32 pb-20 ">Galeria Zdjęć</h1>
-			<div className="flex flex-row justify-center items-center gap-2 text-white my-6">
+			<h1 className="text-center text-4xl pt-32 pb-5 ">Galeria Zdjęć</h1>
+			<div className="flex flex-row justify-center items-center gap-2 text-white my-6 pb-10">
 				{arrayOfUniqueTags.map((buttonTag) => (
 					<AlbumFilterButton
 						key={buttonTag}
