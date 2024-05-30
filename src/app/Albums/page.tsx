@@ -4,7 +4,8 @@ import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import AlbumItem from "./components/AlbumItem";
 import AlbumFilterButton from "./components/AlbumFilterButton";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 const allAlbumPhotos = [
 	[
 		{
@@ -375,39 +376,72 @@ export default function Albums() {
 
 	const albumCover = allAlbumPhotos.map((album) => album[0]);
 
-	const filteredAlbums = albumCover.filter((album) => album.tag.includes(tag));
+	const filteredAlbums = albumCover.filter(
+		(album) => tag === "Wszystkie" || album.tag.includes(tag)
+	);
 
 	const handleTagChange = (newTag: string) => {
 		setTag(newTag);
 	};
 
-	const arrayOfTags = albumCover.map((tag) => tag.tag);
+	const arrayOfTags = albumCover.map((album) => album.tag);
 	const arrayOfUniqueTags = Array.from(new Set(arrayOfTags.flat()));
 
+	const ref = useRef(null);
+	const isInView = useInView(ref, { once: true });
+
+	const cardVariants = {
+		initial: { y: 50, opacity: 0 },
+		animate: { y: 0, opacity: 1 },
+	};
+
 	return (
-		<main className="">
+		<main ref={ref}>
 			<Navbar />
-			<h1 className="text-center text-4xl pt-32 pb-5 ">Galeria Zdjęć</h1>
-			<div className="flex flex-row justify-center items-center gap-2 text-white my-6 pb-10">
+			<motion.h1
+				initial={{ opacity: 0, scale: 0.5 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.5 }}
+				className="text-center text-4xl pt-32 pb-5 "
+			>
+				Galeria Zdjęć
+			</motion.h1>
+			<motion.div
+				initial={{ opacity: 0, scale: 0.5 }}
+				animate={{ opacity: 1, scale: 1 }}
+				transition={{ duration: 0.5 }}
+				className="flex flex-row justify-center items-center gap-2 text-white my-6 pb-10"
+			>
 				{arrayOfUniqueTags.map((buttonTag) => (
 					<AlbumFilterButton
 						key={buttonTag}
 						name={buttonTag}
-						onClick={handleTagChange}
+						onClick={() => handleTagChange(buttonTag)}
 						isSelected={tag === buttonTag}
 					/>
 				))}
-			</div>
-			<div className="max-w-7xl grid gap-10 grid-cols-album m-auto px-5">
-				{filteredAlbums.map((album) => (
-					<AlbumItem
-						key={album.title}
-						title={album.title}
-						src={album.src}
-						tag={album.tag}
-					/>
+			</motion.div>
+			<ul
+				key={tag}
+				className="max-w-7xl grid gap-10 grid-cols-album m-auto px-5"
+			>
+				{filteredAlbums.map((album, index) => (
+					<motion.li
+						key={index}
+						variants={cardVariants}
+						initial="initial"
+						animate={isInView ? "animate" : "initial"}
+						transition={{ duration: 0.3, delay: index * 0.4 }}
+					>
+						<AlbumItem
+							key={album.title}
+							title={album.title}
+							src={album.src}
+							tag={album.tag}
+						/>
+					</motion.li>
 				))}
-			</div>
+			</ul>
 
 			<Footer />
 		</main>
