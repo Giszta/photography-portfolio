@@ -6,11 +6,12 @@ interface AlbumItemType {
 	title: string;
 	src: string;
 	tag: string[];
+	onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export default function AlbumItem({ title, src, tag }: AlbumItemType) {
+export default function AlbumItem({ title, src, tag, onClick }: AlbumItemType) {
 	return (
-		<div>
+		<div onClick={onClick}>
 			<h1 className="text-center ">{title}</h1>
 			<div>
 				<div className="frames">
