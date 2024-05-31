@@ -6,7 +6,6 @@ export default function AuthorCircle({ authorName }: { authorName: string }) {
 			<div className="text-white text-center px-5 font-serif text-lg">
 				{authorName}
 			</div>
-			;
 		</div>
 	);
 }
