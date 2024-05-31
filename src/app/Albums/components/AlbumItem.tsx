@@ -17,7 +17,7 @@ export default function AlbumItem({ title, src, tag, onClick }: AlbumItemType) {
 				<div className="frames">
 					<div className="frame">
 						<Image
-							className="min-w-sm photo"
+							className="min-w-sm photo w-[250px] h-[150px]  md:w-[300px] md:h-[180px]"
 							src={src}
 							width={300}
 							height={300}
