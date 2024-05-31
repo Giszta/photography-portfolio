@@ -21,22 +21,33 @@ function getRandomPhoto(photoList: string[]) {
 
 export default function HomePhotoSlide() {
 	const [randomPhotoSrc, setRandomPhotoSrc] = useState("");
+	const [isPortrait, setIsPortrait] = useState(
+		window.matchMedia("(orientation: portrait)").matches
+	);
 
 	useEffect(() => {
-		function updatePhoto() {
-			const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-			const photoList = isPortrait ? portraitPhotos : landscapePhotos;
-			setRandomPhotoSrc(getRandomPhoto(photoList));
+		function updateOrientation() {
+			const currentIsPortrait = window.matchMedia(
+				"(orientation: portrait)"
+			).matches;
+			if (currentIsPortrait !== isPortrait) {
+				const photoList = currentIsPortrait ? portraitPhotos : landscapePhotos;
+				setRandomPhotoSrc(getRandomPhoto(photoList));
+				setIsPortrait(currentIsPortrait);
+			}
 		}
 
-		updatePhoto();
-		window.addEventListener("resize", updatePhoto);
+		// Initial photo set
+		const initialPhotoList = isPortrait ? portraitPhotos : landscapePhotos;
+		setRandomPhotoSrc(getRandomPhoto(initialPhotoList));
+
+		window.addEventListener("resize", updateOrientation);
 
 		// Cleanup listener on component unmount
 		return () => {
-			window.removeEventListener("resize", updatePhoto);
+			window.removeEventListener("resize", updateOrientation);
 		};
-	}, []);
+	}, [isPortrait]);
 
 	return (
 		<div className="photo-slide block absolute overflow-hidden -z-50 inset-0">
