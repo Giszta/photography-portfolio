@@ -411,34 +411,38 @@ export default function Albums() {
 	};
 
 	return (
-		<main ref={ref}>
+		<main ref={ref} className="mt-28">
 			<Navbar />
 			<motion.h1
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 0.5 }}
-				className="text-center text-4xl pt-32 pb-5 "
+				className=" text-center text-4xl pb-10 font-serif "
 			>
 				Galeria Zdjęć
 			</motion.h1>
+
 			<motion.div
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 0.5 }}
-				className="flex flex-row justify-center items-center gap-2 text-white my-6 pb-10"
+				className="flex justify-center gap-4 text-white  pb-10"
 			>
-				{arrayOfUniqueTags.map((buttonTag) => (
-					<AlbumFilterButton
-						key={buttonTag}
-						name={buttonTag}
-						onClick={() => handleTagChange(buttonTag)}
-						isSelected={tag === buttonTag}
-					/>
-				))}
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+					{arrayOfUniqueTags.map((buttonTag) => (
+						<AlbumFilterButton
+							key={buttonTag}
+							name={buttonTag}
+							onClick={() => handleTagChange(buttonTag)}
+							isSelected={tag === buttonTag}
+						/>
+					))}
+				</div>
 			</motion.div>
+
 			<ul
 				key={tag}
-				className="max-w-7xl grid gap-10 grid-cols-album m-auto px-5"
+				className="max-w-7xl grid gap-10 grid-cols-album m-auto pl-2 pr-2"
 			>
 				{filteredAlbums.map((album, index) => (
 					<motion.li

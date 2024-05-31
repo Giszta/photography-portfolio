@@ -12,7 +12,7 @@ export default function Navbar() {
 
 	return (
 		<nav className="">
-			<div className="md:bg-black opacity-75 absolute w-screen md:shadow-lg shadow-stone-500/50">
+			<div className="md:bg-black opacity-75 absolute w-screen md:shadow-lg shadow-stone-500/50 top-0 z-10">
 				<div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
 					<div className="flex items-center justify-between h-20">
 						<div className="flex items-center">
@@ -37,10 +37,10 @@ export default function Navbar() {
 					</div>
 				</div>
 			</div>
-			<div className="z-50 absolute top-0 right-0 h-16 w-16 block">
+			<div className="z-50 absolute top-4 right-4 h-12 w-12 opacity-75 block md:hidden bg-black rounded-full">
 				<Hamburger
-					color="#f0f0f8"
-					size={20}
+					color="#ffffff"
+					size={24}
 					toggled={isOpen}
 					toggle={setIsOpen}
 				/>

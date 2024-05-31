@@ -2,19 +2,18 @@
 import Image from "next/image";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
-import NavbarMobile from "../components/Navbar/Navbar-mobile";
 import AboutMePhoto from "../assets/AboutMe/about me.jpg";
 import { motion } from "framer-motion";
 export default function AboutMe() {
 	return (
-		<main>
+		<main className="mt-28">
 			<Navbar />
-			<NavbarMobile />
+
 			<motion.h1
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 0.5 }}
-				className="text-center text-4xl pt-32 pb-10"
+				className="text-center text-4xl pb-10"
 			>
 				{" "}
 				O Mnie{" "}
@@ -36,11 +35,16 @@ export default function AboutMe() {
 					</p>
 					<br />
 					<p className="indent-5">
-						Moja przygoda z fotografią zaczęła się od [krótka historia o tym,
-						jak zaczęła się Twoja przygoda z fotografią], a od tamtego czasu
-						każda podróż jest dla mnie okazją do rozwijania mojej pasji i
-						umiejętności. Fotografia pozwala mi dzielić się z innymi wyjątkowymi
-						chwilami i miejscami, które miałem szczęście odwiedzić.
+						Przygoda z fotografią rozpoczęła się wiele lat temu, a od tamtego
+						czasu każda podróż staje się okazją do rozwijania pasji i
+						umiejętności. Fotografia pozwala odkrywać nowe perspektywy i
+						odkrywać mniej znane zakątki świata. Zdjęcia są wynikiem
+						cierpliwości, uwagi na detale i miłości do odkrywania nieznanego.
+						Każde zdjęcie to osobista historia i wspomnienie, które chcę
+						przekazać innym.Podczas podróży zawsze staram się znaleźć nowe
+						perspektywy i odkrywać mniej znane zakątki świata. Każde zdjęcie to
+						dla mnie osobista historia i wspomnienie, które chcę przekazać
+						innym.
 					</p>
 				</span>
 				<Image
@@ -64,14 +68,14 @@ export default function AboutMe() {
 				/>
 				<span className="max-w-2xl text-justify mx-5 block indent-0.5">
 					<p className="indent-5">
-						Podczas moich podróży zawsze staram się znaleźć nowe perspektywy i
-						odkrywać mniej znane zakątki świata. Moje zdjęcia są wynikiem
-						cierpliwości, uwagi na detale i miłości do odkrywania nieznanego.
-						Każde zdjęcie to dla mnie osobista historia i wspomnienie, które
-						chcę przekazać innym. Kiedy nie podróżuję, zajmuję się [krótkie
-						informacje o Twoich zainteresowaniach lub zawodzie], co również
-						wpływa na moje podejście do fotografii – jestem otwarty na nowe
-						doświadczenia i pomysły.
+						Kiedy nie podróżuję, zajmuję się jazdą na rowerze i dartem. Jazda na
+						rowerze pozwala mi na eksplorowanie okolicy w spokojnym tempie,
+						odkrywanie urokliwych miejsc i czerpanie radości z aktywnego
+						spędzania czasu na świeżym powietrzu. Z kolei gra w darta to dla
+						mnie sposób na relaks, ćwiczenie precyzji i rywalizację w gronie
+						przyjaciół. Te zainteresowania wpływają na moje podejście do
+						fotografii – otwartość na nowe doświadczenia i pomysły, a także
+						dążenie do perfekcji w każdym ujęciu.
 					</p>
 					<br />
 					<p className="indent-5">
@@ -82,7 +86,7 @@ export default function AboutMe() {
 						<br />
 						Pozdrawiam,
 					</p>
-					<p className="signature">Roman Giszter</p>
+					<p className="signature">Romek</p>
 					<br />
 				</span>
 			</motion.div>
