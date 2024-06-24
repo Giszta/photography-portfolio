@@ -64,6 +64,7 @@ export default function Albums() {
 	const arrayOfTags = albumCover.map((album) => album.tags);
 	const arrayOfUniqueTags = Array.from(new Set(arrayOfTags.flat()));
 
+	// Dodaj "Wszystkie" na początek listy tagów oraz "Inne" na końcu listy
 	const sortedTags = [
 		"Wszystkie",
 		...arrayOfUniqueTags.filter((tag) => tag !== "Wszystkie" && tag !== "Inne"),
