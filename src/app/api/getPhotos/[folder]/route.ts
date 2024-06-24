@@ -22,14 +22,16 @@ export async function GET(
 				prefix: `gallery/${folder}/`,
 				max_results: 500,
 				next_cursor: nextCursor,
-				tags: true, // Dodaj to, aby pobierać tagi
+				tags: true,
 			});
 
 			photos.push(
 				...resources.resources.map((resource) => ({
 					public_id: resource.public_id,
-					url: resource.secure_url,
-					tags: resource.tags, // Pobierz tagi z Cloudinary
+					url: resource.secure_url
+						.replace("upload/", "upload/f_auto,q_auto/") // Użyj automatycznej jakości i formatu
+						.replace("http://", "https://"), // Zapewnij używanie HTTPS
+					tags: resource.tags,
 				}))
 			);
 
