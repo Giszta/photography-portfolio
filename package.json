@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@iconify/react": "^4.1.1",
+    "cloudinary": "^2.2.0",
     "clsx": "^2.1.0",
     "framer-motion": "^11.2.9",
     "hamburger-react": "^2.5.1",
@@ -19,6 +20,7 @@
     "react-mailto": "^0.4.0",
     "tailwind-merge": "^2.2.2",
     "tailwind-scrollbar-hide": "^1.1.7",
+    "unsplash-js": "^7.0.19",
     "yet-another-react-lightbox": "^3.19.0"
   },
   "devDependencies": {
