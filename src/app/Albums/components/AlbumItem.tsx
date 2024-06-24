@@ -5,7 +5,7 @@ interface AlbumItemType {
 	title: string;
 	src: string;
 	tags: string[];
-	onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+	onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export default function AlbumItem({
@@ -27,7 +27,8 @@ export default function AlbumItem({
 								width={300}
 								height={300}
 								alt="Album Cover"
-								priority
+								priority={false} // Dodane lazy loading
+								loading="lazy"
 							/>
 						) : (
 							<div className="min-w-sm photo w-[250px] h-[150px] md:w-[300px] md:h-[180px] bg-gray-200 flex items-center justify-center">
