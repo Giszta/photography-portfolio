@@ -1,4 +1,3 @@
-// app/api/getPhotos/[folder]/route.ts
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -23,12 +22,14 @@ export async function GET(
 				prefix: `gallery/${folder}/`,
 				max_results: 500,
 				next_cursor: nextCursor,
+				tags: true, // Dodaj to, aby pobierać tagi
 			});
 
 			photos.push(
 				...resources.resources.map((resource) => ({
 					public_id: resource.public_id,
 					url: resource.secure_url,
+					tags: resource.tags, // Pobierz tagi z Cloudinary
 				}))
 			);
 
