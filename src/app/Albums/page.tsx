@@ -18,13 +18,13 @@ import { fetchAlbumPhotosFromCloudinary } from "../utils/cloudinary";
 interface Photo {
 	url: string;
 	title: string;
-	tag: string[];
+	tags: string[];
 }
 
 interface Album {
 	title: string;
 	src: string;
-	tag: string[];
+	tags: string[];
 }
 
 export default function Albums() {
@@ -54,15 +54,21 @@ export default function Albums() {
 	}, []);
 
 	const filteredAlbums = albumCover.filter(
-		(album) => tag === "Wszystkie" || album.tag.includes(tag)
+		(album) => tag === "Wszystkie" || album.tags.includes(tag)
 	);
 
 	const handleTagChange = (newTag: string) => {
 		setTag(newTag);
 	};
 
-	const arrayOfTags = albumCover.map((album) => album.tag);
+	const arrayOfTags = albumCover.map((album) => album.tags);
 	const arrayOfUniqueTags = Array.from(new Set(arrayOfTags.flat()));
+
+	const sortedTags = [
+		"Wszystkie",
+		...arrayOfUniqueTags.filter((tag) => tag !== "Wszystkie" && tag !== "Inne"),
+		"Inne",
+	];
 
 	const ref = useRef(null);
 	const isInView = useInView(ref, { once: true });
@@ -96,7 +102,7 @@ export default function Albums() {
 				className="flex justify-center gap-4 text-white pb-10"
 			>
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-					{arrayOfUniqueTags.map((buttonTag) => (
+					{sortedTags.map((buttonTag) => (
 						<AlbumFilterButton
 							key={buttonTag}
 							name={buttonTag}
@@ -123,7 +129,7 @@ export default function Albums() {
 							key={album.title}
 							title={album.title}
 							src={album.src}
-							tags={album.tag}
+							tags={album.tags}
 							onClick={() => handleAlbumClick(allAlbumPhotos[index])}
 						/>
 					</motion.li>
