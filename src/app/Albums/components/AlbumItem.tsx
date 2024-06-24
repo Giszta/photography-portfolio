@@ -1,29 +1,39 @@
 import Image from "next/image";
-import { Photo } from "@/types/Gallery_Types";
+import React from "react";
 
-//{ albumCover }: { albumCover: Photo }
 interface AlbumItemType {
 	title: string;
 	src: string;
-	tag: string[];
-	onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+	tags: string[];
+	onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-export default function AlbumItem({ title, src, tag, onClick }: AlbumItemType) {
+export default function AlbumItem({
+	title,
+	src,
+	tags,
+	onClick,
+}: AlbumItemType) {
 	return (
 		<div onClick={onClick}>
-			<h1 className="text-center ">{title}</h1>
+			<h1 className="text-center">{title}</h1>
 			<div>
 				<div className="frames">
 					<div className="frame">
-						<Image
-							className="min-w-sm photo w-[250px] h-[150px]  md:w-[300px] md:h-[180px]"
-							src={src}
-							width={300}
-							height={300}
-							alt="Album Cover"
-							priority
-						/>
+						{src ? (
+							<Image
+								className="min-w-sm photo w-[250px] h-[150px] md:w-[300px] md:h-[180px]"
+								src={src}
+								width={300}
+								height={300}
+								alt="Album Cover"
+								priority
+							/>
+						) : (
+							<div className="min-w-sm photo w-[250px] h-[150px] md:w-[300px] md:h-[180px] bg-gray-200 flex items-center justify-center">
+								Brak zdjęcia
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
