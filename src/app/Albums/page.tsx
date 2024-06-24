@@ -1,9 +1,9 @@
 "use client";
+import React, { useRef, useState, useEffect } from "react";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import AlbumItem from "./components/AlbumItem";
 import AlbumFilterButton from "./components/AlbumFilterButton";
-import React, { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Lightbox from "yet-another-react-lightbox";
 import Counter from "yet-another-react-lightbox/plugins/counter";
@@ -13,378 +13,45 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-const allAlbumPhotos = [
-	[
-		{
-			id: 1,
-			class: "thumbnail first",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/001.jpg",
-		},
-		{
-			id: 2,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/002.jpg",
-		},
-		{
-			id: 3,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/003.jpg",
-		},
-		{
-			id: 4,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/004.jpg",
-		},
-		{
-			id: 5,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/005.jpg",
-		},
-		{
-			id: 6,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/006.jpg",
-		},
-		{
-			id: 7,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/007.jpg",
-		},
-		{
-			id: 8,
-			class: "thumbnail",
-			title: "Zamek Hluboká",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Zamek_Hluboká/008.jpg",
-		},
-	],
-	[
-		{
-			id: 1,
-			class: "thumbnail first",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/001.jpg",
-		},
-		{
-			id: 2,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/002.jpg",
-		},
-		{
-			id: 3,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/003.jpg",
-		},
-		{
-			id: 4,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/004.jpg",
-		},
-		{
-			id: 5,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/005.jpg",
-		},
-		{
-			id: 6,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/006.jpg",
-		},
-		{
-			id: 7,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/007.jpg",
-		},
-		{
-			id: 8,
-			class: "thumbnail",
-			title: "Sopot",
-			tag: ["Wszystkie", "Polska"],
-			src: "/gallery/Sopot2023/008.jpg",
-		},
-	],
-	[
-		{
-			id: 1,
-			class: "thumbnail first",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/001.jpg",
-		},
-		{
-			id: 2,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/002.jpg",
-		},
-		{
-			id: 3,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/003.jpg",
-		},
-		{
-			id: 4,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/004.jpg",
-		},
-		{
-			id: 5,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/005.jpg",
-		},
-		{
-			id: 6,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/006.jpg",
-		},
-		{
-			id: 7,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/007.jpg",
-		},
-		{
-			id: 8,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/008.jpg",
-		},
-		{
-			id: 9,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/009.jpg",
-		},
-		{
-			id: 10,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/010.jpg",
-		},
-		{
-			id: 11,
-			class: "thumbnail",
-			title: "Graffity",
-			tag: ["Wszystkie", "Inne"],
-			src: "/gallery/Graffiti/011.jpg",
-		},
-	],
+import { fetchAlbumPhotosFromCloudinary } from "../utils/cloudinary";
 
-	[
-		{
-			id: 1,
-			class: "thumbnail first",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/001.jpg",
-		},
-		{
-			id: 2,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/002.jpg",
-		},
-		{
-			id: 3,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/003.jpg",
-		},
-		{
-			id: 4,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/004.jpg",
-		},
-		{
-			id: 5,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/005.jpg",
-		},
-		{
-			id: 6,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/006.jpg",
-		},
-		{
-			id: 7,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/007.jpg",
-		},
-		{
-			id: 8,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/008.jpg",
-		},
-		{
-			id: 9,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/009.jpg",
-		},
-		{
-			id: 10,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/010.jpg",
-		},
-		{
-			id: 11,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/011.jpg",
-		},
-		{
-			id: 12,
-			class: "thumbnail",
-			title: "Słowacja 2022",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2022/012.jpg",
-		},
-	],
-	[
-		{
-			id: 1,
-			class: "thumbnail first",
-			title: "Słowacja 2023",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/001.jpg",
-		},
-		{
-			id: 2,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/002.jpg",
-		},
-		{
-			id: 3,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/003.jpg",
-		},
-		{
-			id: 4,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/004.jpg",
-		},
-		{
-			id: 5,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/005.jpg",
-		},
-		{
-			id: 6,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/006.jpg",
-		},
-		{
-			id: 7,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/007.jpg",
-		},
-		{
-			id: 8,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/008.jpg",
-		},
-		{
-			id: 9,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/009.jpg",
-		},
-		{
-			id: 10,
-			class: "thumbnail",
-			title: "Słowacja 2023",
-			filter: "Polska",
-			tag: ["Wszystkie", "Europa"],
-			src: "/gallery/Slowacja2023/010.jpg",
-		},
-	],
-];
+interface Photo {
+	url: string;
+	title: string;
+	tag: string[];
+}
+
+interface Album {
+	title: string;
+	src: string;
+	tag: string[];
+}
 
 export default function Albums() {
 	const [tag, setTag] = useState("Wszystkie");
 	const [open, setOpen] = useState(false);
-	const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState([]);
+	const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState<Photo[]>([]);
+	const [allAlbumPhotos, setAllAlbumPhotos] = useState<Photo[][]>([]);
+	const [albumCover, setAlbumCover] = useState<Album[]>([]);
 
-	const albumCover = allAlbumPhotos.map((album) => album[0]);
+	useEffect(() => {
+		let isMounted = true;
+
+		async function getAlbums() {
+			const albums = await fetchAlbumPhotosFromCloudinary();
+			if (isMounted) {
+				setAllAlbumPhotos(albums);
+				const covers = albums.map((album) => album[0]);
+				setAlbumCover(covers);
+			}
+		}
+
+		getAlbums();
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
 
 	const filteredAlbums = albumCover.filter(
 		(album) => tag === "Wszystkie" || album.tag.includes(tag)
@@ -405,7 +72,7 @@ export default function Albums() {
 		animate: { y: 0, opacity: 1 },
 	};
 
-	const handleAlbumClick = (albumPhotos) => {
+	const handleAlbumClick = (albumPhotos: Photo[]) => {
 		setCurrentAlbumPhotos(albumPhotos);
 		setOpen(true);
 	};
@@ -417,7 +84,7 @@ export default function Albums() {
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 0.5 }}
-				className=" text-center text-4xl pb-10 font-serif "
+				className="text-center text-4xl pb-10 font-serif"
 			>
 				Galeria Zdjęć
 			</motion.h1>
@@ -426,7 +93,7 @@ export default function Albums() {
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ duration: 0.5 }}
-				className="flex justify-center gap-4 text-white  pb-10"
+				className="flex justify-center gap-4 text-white pb-10"
 			>
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 					{arrayOfUniqueTags.map((buttonTag) => (
@@ -456,7 +123,7 @@ export default function Albums() {
 							key={album.title}
 							title={album.title}
 							src={album.src}
-							tag={album.tag}
+							tags={album.tag}
 							onClick={() => handleAlbumClick(allAlbumPhotos[index])}
 						/>
 					</motion.li>
@@ -465,7 +132,7 @@ export default function Albums() {
 			<Lightbox
 				open={open}
 				close={() => setOpen(false)}
-				slides={currentAlbumPhotos.map((photo) => ({ src: photo.src }))}
+				slides={currentAlbumPhotos.map((photo) => ({ src: photo.url }))}
 				plugins={[Counter, Fullscreen, Slideshow, Thumbnails]}
 				counter={{ container: { style: { top: "unset", bottom: 0 } } }}
 				thumbnails={{
