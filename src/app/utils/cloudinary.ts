@@ -1,4 +1,3 @@
-// app/utils/cloudinary.ts
 export async function fetchAlbumPhotosFromCloudinary() {
 	const res = await fetch("/api/getFolders");
 	if (!res.ok) {
@@ -16,7 +15,7 @@ export async function fetchAlbumPhotosFromCloudinary() {
 			return photos.map((photo) => ({
 				...photo,
 				title: folder.name,
-				tag: ["Wszystkie", "Europa"], // Możesz modyfikować tagi zgodnie z wymaganiami
+				tag: photo.tags || ["Wszystkie"], // Pobierz tagi z Cloudinary, dodaj domyślny tag
 				src: photo.url || "/path/to/default/image.jpg", // Dodaj wartość domyślną dla src
 			}));
 		})
