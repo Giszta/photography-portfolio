@@ -2,9 +2,12 @@ interface PhotoType {
 	public_id: string;
 	url: string;
 	tags: string[];
+	width: number;
+	height: number;
 }
 export async function fetchAlbumPhotosFromCloudinary() {
 	const res = await fetch("/api/getFolders");
+
 	if (!res.ok) {
 		throw new Error("Failed to fetch folders");
 	}
@@ -29,4 +32,24 @@ export async function fetchAlbumPhotosFromCloudinary() {
 	);
 
 	return albumPhotos;
+}
+export async function fetchAboutMePhotosFromCloudinary() {
+	try {
+		const res = await fetch("/api/getAboutMePhotos");
+		if (!res.ok) {
+			throw new Error("Failed to fetch AboutMe photos");
+		}
+		const photos: PhotoType[] = await res.json();
+		return photos.map((photo) => ({
+			...photo,
+			src: photo.url
+				.replace("upload/", "upload/f_auto,q_auto/")
+				.replace("http://", "https://"),
+			width: photo.width,
+			height: photo.height,
+		}));
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
 }
