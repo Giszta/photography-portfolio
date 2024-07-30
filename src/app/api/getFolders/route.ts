@@ -21,9 +21,14 @@ export async function GET() {
 			});
 
 			resources.resources.forEach((resource) => {
-				const folderPath = resource.public_id.split("/").slice(0, 2).join("/");
-				if (folderPath.startsWith("gallery/")) {
-					folderSet.add(folderPath);
+				if (resource.bytes > 0) {
+					const folderPath = resource.public_id
+						.split("/")
+						.slice(0, 2)
+						.join("/");
+					if (folderPath.startsWith("gallery/")) {
+						folderSet.add(folderPath);
+					}
 				}
 			});
 
