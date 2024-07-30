@@ -7,40 +7,31 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function GET(
-	request: Request,
-	{ params }: { params: { folder: string } }
-) {
+export async function GET() {
 	try {
-		const { folder } = params;
 		const photos = [];
 		let nextCursor: string | undefined = undefined;
 
 		do {
 			const resources = await cloudinary.api.resources({
 				type: "upload",
-				prefix: `gallery/${folder}/`,
+				prefix: "AboutMe/",
 				max_results: 500,
 				next_cursor: nextCursor,
 				tags: true,
 			});
 
 			photos.push(
-				...resources.resources
-					.map((resource) => {
-						if (resource.bytes === 0) {
-							return undefined;
-						}
-						return {
-							public_id: resource.public_id,
-							url: resource.secure_url
-								.replace("upload/", "upload/f_auto,q_auto/")
-								.replace("http://", "https://"),
-							tags: resource.tags,
-							created_at: resource.created_at,
-						};
-					})
-					.filter(Boolean)
+				...resources.resources.map((resource) => ({
+					public_id: resource.public_id,
+					url: resource.secure_url
+						.replace("upload/", "upload/f_auto,q_auto/")
+						.replace("http://", "https://"),
+					tags: resource.tags,
+					created_at: resource.created_at,
+					width: resource.width,
+					height: resource.height,
+				}))
 			);
 
 			nextCursor = resources.next_cursor;

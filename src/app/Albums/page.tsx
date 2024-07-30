@@ -6,10 +6,12 @@ import AlbumItem from "./components/AlbumItem";
 import AlbumFilterButton from "./components/AlbumFilterButton";
 import { motion, useInView } from "framer-motion";
 import Lightbox from "yet-another-react-lightbox";
-import Counter from "yet-another-react-lightbox/plugins/counter";
-import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
-import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import {
+	Counter,
+	Fullscreen,
+	Slideshow,
+	Thumbnails,
+} from "yet-another-react-lightbox/plugins";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
@@ -19,6 +21,7 @@ interface Photo {
 	url: string;
 	title: string;
 	tags: string[];
+	created_at: string;
 }
 
 interface Album {
@@ -39,9 +42,17 @@ export default function Albums() {
 
 		async function getAlbums() {
 			const albums = await fetchAlbumPhotosFromCloudinary();
+			const sortedAlbums = albums
+				.filter((album) => album.length > 0 && album[0].tag.length > 0)
+				.sort((a, b) => {
+					const dateA = new Date(a[0].created_at);
+					const dateB = new Date(b[0].created_at);
+					return dateB.getTime() - dateA.getTime();
+				});
+
 			if (isMounted) {
-				setAllAlbumPhotos(albums);
-				const covers = albums.map((album) => album[0]);
+				setAllAlbumPhotos(sortedAlbums);
+				const covers = sortedAlbums.map((album) => album[0]);
 				setAlbumCover(covers);
 			}
 		}

@@ -1,10 +1,29 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
-import AboutMePhoto from "../assets/AboutMe/about me.jpg";
+import { fetchAboutMePhotosFromCloudinary } from "../utils/cloudinary";
 import { motion } from "framer-motion";
+
+interface Photo {
+	src: string;
+	alt: string;
+	width: number;
+	height: number;
+}
+
 export default function AboutMe() {
+	const [photos, setPhotos] = useState<Photo[]>([]);
+
+	useEffect(() => {
+		const fetchPhotos = async () => {
+			const fetchedPhotos = await fetchAboutMePhotosFromCloudinary();
+			setPhotos(fetchedPhotos);
+		};
+		fetchPhotos();
+	}, []);
+
 	return (
 		<main className="mt-28">
 			<Navbar />
@@ -47,12 +66,16 @@ export default function AboutMe() {
 						innym.
 					</p>
 				</span>
-				<Image
-					className="max-w-md w-11/12 rounded-3xl mx-5"
-					src={AboutMePhoto}
-					alt="About me photo"
-					priority
-				/>
+				{photos.length > 0 && (
+					<Image
+						className="max-w-md w-11/12 rounded-3xl mx-5"
+						src={photos[0].src}
+						alt="About me photo"
+						width={photos[0].width || 300}
+						height={photos[0].height || 300}
+						priority
+					/>
+				)}
 			</motion.div>
 			<motion.div
 				initial={{ opacity: 0, scale: 0.5 }}
@@ -60,12 +83,16 @@ export default function AboutMe() {
 				transition={{ delay: 1, duration: 0.5 }}
 				className="flex justify-center items-center gap-x-20 gap-y-5 max-w-7xl m-auto mb-5 flex-wrap "
 			>
-				<Image
-					className="max-w-md w-11/12 rounded-3xl mx-5"
-					src={AboutMePhoto}
-					alt="About me photo"
-					priority
-				/>
+				{photos.length > 0 && (
+					<Image
+						className="max-w-md w-11/12 rounded-3xl mx-5"
+						src={photos[1].src}
+						alt="About me photo"
+						width={photos[1].width || 300}
+						height={photos[1].height || 300}
+						priority
+					/>
+				)}
 				<span className="max-w-2xl text-justify mx-5 block indent-0.5">
 					<p className="indent-5">
 						Kiedy nie podróżuję, zajmuję się jazdą na rowerze i dartem. Jazda na
