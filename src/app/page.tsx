@@ -2,7 +2,6 @@ import Circles from "./HomePage/Circles";
 import HomePhotoSlide from "./HomePage/HomePhotoSlide";
 import Footer from "./components/Footer/Footer";
 import Navbar from "./components/Navbar/Navbar";
-import NavbarMobile from "./components/Navbar/NavbarMobile";
 
 export default function Home() {
 	return (
