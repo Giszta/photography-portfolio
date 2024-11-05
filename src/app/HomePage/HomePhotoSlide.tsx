@@ -38,11 +38,13 @@ export default function HomePhotoSlide() {
 			if (photos.length > 0) {
 				setRandomPhotoSrc(getRandomPhoto(photos));
 			}
+			console.log(photos);
+			console.log(folder);
 		}
 
-		function getRandomPhoto(photoList: { src: string }[]) {
+		function getRandomPhoto(photoList: { url: string }[]) {
 			const randomIndex = Math.floor(Math.random() * photoList.length);
-			return photoList[randomIndex].src;
+			return photoList[randomIndex].url;
 		}
 
 		loadPhotos();
@@ -51,7 +53,7 @@ export default function HomePhotoSlide() {
 		<div className="photo-slide block absolute overflow-hidden -z-50 inset-0">
 			{randomPhotoSrc && (
 				<Image
-					className="h-screen w-screen object-cover animate-fade animate-duration-1000 animate-ease-in"
+					className="h-screen w-screen object-cover animate-fade animate-duration-500 animate-ease-in"
 					src={randomPhotoSrc}
 					fill
 					alt="Home page slide"
