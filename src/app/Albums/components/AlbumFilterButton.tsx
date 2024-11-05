@@ -1,6 +1,16 @@
 import React from "react";
 
-const AlbumFilterButton = ({ name, onClick, isSelected }) => {
+interface AlbumFilterButtonType {
+	name: string;
+	onClick: (name: string) => void;
+	isSelected: boolean;
+}
+
+const AlbumFilterButton = ({
+	name,
+	onClick,
+	isSelected,
+}: AlbumFilterButtonType) => {
 	const buttonStyles = isSelected
 		? "text-#e7e5e4 bg-black opacity-80 border-sky-500 border-4"
 		: "text-black border-slate-600  ";
