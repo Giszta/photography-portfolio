@@ -1,4 +1,3 @@
-// components/HomePhotoSlide.tsx
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -6,16 +5,14 @@ import { fetchPhotosByFolder } from "../utils/cloudinary";
 
 export default function HomePhotoSlide() {
 	const [randomPhotoSrc, setRandomPhotoSrc] = useState("");
-	const [isPortrait, setIsPortrait] = useState<boolean | null>(null); // Zmieniamy na `null`, żeby początkowo nie ładować żadnych zdjęć
+	const [isPortrait, setIsPortrait] = useState<boolean | null>(null);
 
-	// Sprawdzamy orientację tylko po stronie klienta
 	useEffect(() => {
 		const currentIsPortrait = window.matchMedia(
 			"(orientation: portrait)"
 		).matches;
 		setIsPortrait(currentIsPortrait);
 
-		// Funkcja do nasłuchiwania zmiany orientacji ekranu
 		function updateOrientation() {
 			const newIsPortrait = window.matchMedia(
 				"(orientation: portrait)"
@@ -27,19 +24,16 @@ export default function HomePhotoSlide() {
 
 		window.addEventListener("resize", updateOrientation);
 
-		// Cleanup listener on component unmount
 		return () => {
 			window.removeEventListener("resize", updateOrientation);
 		};
-	}, []);
+	}, [isPortrait]);
 
-	// Ładowanie zdjęć po zaktualizowaniu orientacji
 	useEffect(() => {
-		if (isPortrait === null) return; // Poczekaj, aż orientacja zostanie określona
+		if (isPortrait === null) return;
 
 		async function loadPhotos() {
 			const folder = isPortrait ? "HomeSlide/portrait" : "HomeSlide/landscape";
-			// console.log(`Fetching photos from folder: ${folder}`);
 			const photos = await fetchPhotosByFolder(folder);
 			if (photos.length > 0) {
 				setRandomPhotoSrc(getRandomPhoto(photos));
@@ -51,7 +45,6 @@ export default function HomePhotoSlide() {
 			return photoList[randomIndex].src;
 		}
 
-		// Załaduj zdjęcia po ustawieniu orientacji
 		loadPhotos();
 	}, [isPortrait]);
 	return (

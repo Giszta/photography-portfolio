@@ -7,11 +7,18 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+interface CloudinaryResource {
+	public_id: string;
+	secure_url: string;
+	tags: string[];
+	created_at: string;
+	width: number;
+	height: number;
+}
 export async function GET() {
 	try {
 		const photos = [];
 		let nextCursor: string | undefined = undefined;
-
 		do {
 			const resources = await cloudinary.api.resources({
 				type: "upload",
@@ -20,9 +27,8 @@ export async function GET() {
 				next_cursor: nextCursor,
 				tags: true,
 			});
-
 			photos.push(
-				...resources.resources.map((resource) => ({
+				...resources.resources.map((resource: CloudinaryResource) => ({
 					public_id: resource.public_id,
 					url: resource.secure_url
 						.replace("upload/", "upload/f_auto,q_auto/")
@@ -33,10 +39,8 @@ export async function GET() {
 					height: resource.height,
 				}))
 			);
-
 			nextCursor = resources.next_cursor;
 		} while (nextCursor);
-
 		return NextResponse.json(photos);
 	} catch (error) {
 		console.error("Error fetching photos from Cloudinary:", error);

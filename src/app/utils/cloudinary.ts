@@ -1,11 +1,16 @@
-interface PhotoType {
-	public_id: string;
-	url: string;
-	tags: string[];
-	width: number;
+export interface PhotoType {
+	alt: string;
+	created_at: Date;
 	height: number;
+	length: number;
+	public_id: string;
+	tags: string[];
+	title: string;
+	url: string;
+	width: number;
 }
-export async function fetchAlbumPhotosFromCloudinary() {
+
+export async function fetchAlbumPhotosFromCloudinary(): Promise<PhotoType[][]> {
 	const res = await fetch("/api/getFolders");
 
 	if (!res.ok) {
@@ -20,7 +25,7 @@ export async function fetchAlbumPhotosFromCloudinary() {
 				throw new Error(`Failed to fetch photos for folder: ${folder.name}`);
 			}
 			const photos: PhotoType[] = await res.json();
-			return photos.map((photo) => ({
+			const d = photos.map((photo) => ({
 				...photo,
 				title: folder.name,
 				tag: photo.tags || ["Wszystkie"],
@@ -28,12 +33,13 @@ export async function fetchAlbumPhotosFromCloudinary() {
 					.replace("upload/", "upload/f_auto,q_auto/")
 					.replace("http://", "https://"),
 			}));
+			return d;
 		})
 	);
 
 	return albumPhotos;
 }
-export async function fetchAboutMePhotosFromCloudinary() {
+export async function fetchAboutMePhotosFromCloudinary(): Promise<PhotoType[]> {
 	try {
 		const res = await fetch("/api/getAboutMePhotos");
 		if (!res.ok) {
@@ -53,8 +59,6 @@ export async function fetchAboutMePhotosFromCloudinary() {
 		return [];
 	}
 }
-
-// utils/cloudinary.ts
 
 export async function fetchPhotosByFolder(folder: string) {
 	try {
