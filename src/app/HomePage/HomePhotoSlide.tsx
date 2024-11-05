@@ -38,8 +38,6 @@ export default function HomePhotoSlide() {
 			if (photos.length > 0) {
 				setRandomPhotoSrc(getRandomPhoto(photos));
 			}
-			console.log(photos);
-			console.log(folder);
 		}
 
 		function getRandomPhoto(photoList: { url: string }[]) {
