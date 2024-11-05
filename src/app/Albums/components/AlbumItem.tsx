@@ -27,8 +27,7 @@ export default function AlbumItem({
 								width={300}
 								height={300}
 								alt="Album Cover"
-								priority={false} // Dodane lazy loading
-								loading="lazy"
+								priority
 							/>
 						) : (
 							<div className="min-w-sm photo w-[250px] h-[150px] md:w-[300px] md:h-[180px] bg-gray-200 flex items-center justify-center">

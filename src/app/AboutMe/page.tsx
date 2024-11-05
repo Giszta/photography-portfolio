@@ -5,17 +5,10 @@ import Footer from "../components/Footer/Footer";
 import Navbar from "../components/Navbar/Navbar";
 import { fetchAboutMePhotosFromCloudinary } from "../utils/cloudinary";
 import { motion } from "framer-motion";
-
-interface Photo {
-	src: string;
-	alt: string;
-	width: number;
-	height: number;
-}
+import { PhotoType } from "../utils/cloudinary";
 
 export default function AboutMe() {
-	const [photos, setPhotos] = useState<Photo[]>([]);
-
+	const [photos, setPhotos] = useState<PhotoType[]>([]);
 	useEffect(() => {
 		const fetchPhotos = async () => {
 			const fetchedPhotos = await fetchAboutMePhotosFromCloudinary();
@@ -27,7 +20,6 @@ export default function AboutMe() {
 	return (
 		<main className="mt-28">
 			<Navbar />
-
 			<motion.h1
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
@@ -69,7 +61,7 @@ export default function AboutMe() {
 				{photos.length > 0 && (
 					<Image
 						className="max-w-md w-11/12 rounded-3xl mx-5"
-						src={photos[0].src}
+						src={photos[0].url}
 						alt="About me photo"
 						width={photos[0].width || 300}
 						height={photos[0].height || 300}
@@ -86,7 +78,7 @@ export default function AboutMe() {
 				{photos.length > 0 && (
 					<Image
 						className="max-w-md w-11/12 rounded-3xl mx-5"
-						src={photos[1].src}
+						src={photos[1].url}
 						alt="About me photo"
 						width={photos[1].width || 300}
 						height={photos[1].height || 300}
