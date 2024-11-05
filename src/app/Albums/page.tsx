@@ -16,26 +16,14 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { fetchAlbumPhotosFromCloudinary } from "../utils/cloudinary";
-
-interface Photo {
-	url: string;
-	title: string;
-	tags: string[];
-	created_at: string;
-}
-
-interface Album {
-	title: string;
-	src: string;
-	tags: string[];
-}
+import { PhotoType } from "../utils/cloudinary";
 
 export default function Albums() {
 	const [tag, setTag] = useState("Wszystkie");
 	const [open, setOpen] = useState(false);
-	const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState<Photo[]>([]);
-	const [allAlbumPhotos, setAllAlbumPhotos] = useState<Photo[][]>([]);
-	const [albumCover, setAlbumCover] = useState<Album[]>([]);
+	const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState<PhotoType[]>([]);
+	const [allAlbumPhotos, setAllAlbumPhotos] = useState<PhotoType[][]>([]);
+	const [albumCover, setAlbumCover] = useState<PhotoType[]>([]);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -43,7 +31,7 @@ export default function Albums() {
 		async function getAlbums() {
 			const albums = await fetchAlbumPhotosFromCloudinary();
 			const sortedAlbums = albums
-				.filter((album) => album.length > 0 && album[0].tag.length > 0)
+				.filter((album) => album.length > 0 && album[0].tags.length > 0)
 				.sort((a, b) => {
 					const dateA = new Date(a[0].created_at);
 					const dateB = new Date(b[0].created_at);
@@ -56,9 +44,7 @@ export default function Albums() {
 				setAlbumCover(covers);
 			}
 		}
-
 		getAlbums();
-
 		return () => {
 			isMounted = false;
 		};
@@ -74,11 +60,17 @@ export default function Albums() {
 
 	const arrayOfTags = albumCover.map((album) => album.tags);
 	const arrayOfUniqueTags = Array.from(new Set(arrayOfTags.flat()));
-
-	// Dodaj "Wszystkie" na początek listy tagów oraz "Inne" na końcu listy
 	const sortedTags = [
 		"Wszystkie",
-		...arrayOfUniqueTags.filter((tag) => tag !== "Wszystkie" && tag !== "Inne"),
+		"Europa",
+		"Polska",
+		...arrayOfUniqueTags.filter(
+			(tag) =>
+				tag !== "Wszystkie" &&
+				tag !== "Europa" &&
+				tag !== "Polska" &&
+				tag !== "Inne"
+		),
 		"Inne",
 	];
 
@@ -90,7 +82,7 @@ export default function Albums() {
 		animate: { y: 0, opacity: 1 },
 	};
 
-	const handleAlbumClick = (albumPhotos: Photo[]) => {
+	const handleAlbumClick = (albumPhotos: PhotoType[]) => {
 		setCurrentAlbumPhotos(albumPhotos);
 		setOpen(true);
 	};
@@ -106,7 +98,6 @@ export default function Albums() {
 			>
 				Galeria Zdjęć
 			</motion.h1>
-
 			<motion.div
 				initial={{ opacity: 0, scale: 0.5 }}
 				animate={{ opacity: 1, scale: 1 }}
@@ -124,7 +115,6 @@ export default function Albums() {
 					))}
 				</div>
 			</motion.div>
-
 			<ul
 				key={tag}
 				className="max-w-7xl grid gap-10 grid-cols-album m-auto pl-2 pr-2"
@@ -140,7 +130,7 @@ export default function Albums() {
 						<AlbumItem
 							key={album.title}
 							title={album.title}
-							src={album.src}
+							src={album.url}
 							tags={album.tags}
 							onClick={() => handleAlbumClick(allAlbumPhotos[index])}
 						/>
