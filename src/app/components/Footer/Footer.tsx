@@ -17,7 +17,7 @@ export default function Footer() {
 			<div className="text-white text-xs tracking-wide font-mono  ">
 				Copyright © {getDate()} www.fotoroman.pl
 			</div>
-			<div className="socials hidden md:flex flex-row gap-4 items-center">
+			<div className="socials hidden lg:flex flex-row gap-4 items-center">
 				<Link href="https://www.shutterstock.com/pl/g/Roman+Giszter?rid=290584745">
 					<ShutterstockIcon
 						className="text-white  w-6 h-6 hover:text-sky-500 duration-500"

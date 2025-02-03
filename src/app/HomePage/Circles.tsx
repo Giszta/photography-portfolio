@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import AuthorCircle from "./AuthorCircle";
 import QuoteCircle from "./QuoteCircle";
 
@@ -69,13 +70,15 @@ const homeSlideQuote = [
 ];
 
 function getRandomQuote() {
-	const randomQuote = Math.floor(Math.random() * homeSlideQuote.length);
-	return homeSlideQuote[randomQuote];
+	return homeSlideQuote[Math.floor(Math.random() * homeSlideQuote.length)];
 }
 
 export default function Circles() {
-	const randomQuote = getRandomQuote();
+	const [randomQuote, setRandomQuote] = useState(getRandomQuote());
 
+	useEffect(() => {
+		setRandomQuote(getRandomQuote());
+	}, []);
 	return (
 		<div className="flex justify-center items-center h-screen">
 			<AuthorCircle authorName={randomQuote.author} />

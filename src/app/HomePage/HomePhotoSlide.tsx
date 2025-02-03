@@ -38,8 +38,6 @@ export default function HomePhotoSlide() {
 			if (photos.length > 0) {
 				setRandomPhotoSrc(getRandomPhoto(photos));
 			}
-			console.log(photos);
-			console.log(folder);
 		}
 
 		function getRandomPhoto(photoList: { url: string }[]) {
@@ -49,11 +47,16 @@ export default function HomePhotoSlide() {
 
 		loadPhotos();
 	}, [isPortrait]);
+
+	useEffect(() => {
+		document.body.classList.add("no-scroll");
+		return () => document.body.classList.remove("no-scroll");
+	}, []);
 	return (
-		<div className="photo-slide block absolute overflow-hidden -z-50 inset-0">
+		<div className="photo-slide fixed top-0 left-0 w-full h-full overflow-hidden -z-50 inset-0">
 			{randomPhotoSrc && (
 				<Image
-					className="h-screen w-screen object-cover animate-fade animate-duration-500 animate-ease-in"
+					className="absolute top-0 left-0 w-full h-full object-cover animate-fade animate-duration-500 animate-ease-in"
 					src={randomPhotoSrc}
 					fill
 					alt="Home page slide"

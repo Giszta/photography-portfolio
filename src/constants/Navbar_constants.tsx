@@ -1,6 +1,10 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { NavbarItem } from "../types/Navbar_Types";
 
+type NavbarItem = {
+	title: string;
+	path: string;
+	icon: React.ReactNode;
+};
 export const NAVBAR_ITEMS: NavbarItem[] = [
 	{
 		title: "Strona Główna",

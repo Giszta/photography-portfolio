@@ -18,7 +18,7 @@ export default function AboutMe() {
 	}, []);
 
 	return (
-		<main className="mt-28">
+		<main className="mt-28 overflow-">
 			<Navbar />
 			<motion.h1
 				initial={{ opacity: 0, scale: 0.5 }}
