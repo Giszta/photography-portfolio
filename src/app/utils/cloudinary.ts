@@ -62,8 +62,8 @@ export async function fetchAboutMePhotosFromCloudinary(): Promise<PhotoType[]> {
 
 export async function fetchPhotosByFolder(folder: string) {
 	try {
-		const response = await fetch(`/api/getHomepagePhotos?folder=${folder}`);
-		const data = await response.json();
+	const response = await fetch(`/api/getHomepagePhotos?folder=${folder}`);
+	const data = await response.json();
 
 		if (response.ok) {
 			return data;

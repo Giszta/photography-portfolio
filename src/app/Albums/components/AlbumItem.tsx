@@ -22,7 +22,7 @@ export default function AlbumItem({
 					<div className="frame">
 						{src ? (
 							<Image
-								className="min-w-sm photo w-[250px] h-[150px] md:w-[300px] md:h-[180px]"
+								className="min-w-sm photo w-[250px] h-[150px] lg:w-[300px] lg:h-[180px]"
 								src={src}
 								width={300}
 								height={300}
@@ -30,7 +30,7 @@ export default function AlbumItem({
 								priority
 							/>
 						) : (
-							<div className="min-w-sm photo w-[250px] h-[150px] md:w-[300px] md:h-[180px] bg-gray-200 flex items-center justify-center">
+							<div className="min-w-sm photo w-[250px] h-[150px] lg:w-[300px] lg:h-[180px] bg-gray-200 flex items-center justify-center">
 								Brak zdjęcia
 							</div>
 						)}

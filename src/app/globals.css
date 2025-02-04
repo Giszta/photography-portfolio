@@ -11,8 +11,29 @@
 	display: none;
 }
 
+html,
+body {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
 body {
 	background-color: #e7e5e4;
+}
+.no-scroll {
+	overflow: hidden;
+	height: 100vh;
+}
+
+footer {
+	position: relative;
+	z-index: 50;
+	width: 100%;
+	background-color: #e7e5e4;
+	padding: 10px 0;
+	text-align: center;
 }
 
 .signature {

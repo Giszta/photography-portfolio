@@ -50,8 +50,8 @@ export default function Albums() {
 		};
 	}, []);
 
-	const filteredAlbums = albumCover.filter(
-		(album) => tag === "Wszystkie" || album.tags.includes(tag)
+	const filteredAlbums = allAlbumPhotos.filter(
+		(album) => tag === "Wszystkie" || album[0].tags.includes(tag)
 	);
 
 	const handleTagChange = (newTag: string) => {
@@ -104,7 +104,7 @@ export default function Albums() {
 				transition={{ duration: 0.5 }}
 				className="flex justify-center gap-4 text-white pb-10"
 			>
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+				<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 					{sortedTags.map((buttonTag) => (
 						<AlbumFilterButton
 							key={buttonTag}
@@ -128,11 +128,11 @@ export default function Albums() {
 						transition={{ duration: 0.3, delay: index * 0.4 }}
 					>
 						<AlbumItem
-							key={album.title}
-							title={album.title}
-							src={album.url}
-							tags={album.tags}
-							onClick={() => handleAlbumClick(allAlbumPhotos[index])}
+							key={album[0].title}
+							title={album[0].title}
+							src={album[0].url}
+							tags={album[0].tags}
+							onClick={() => handleAlbumClick(album)}
 						/>
 					</motion.li>
 				))}
