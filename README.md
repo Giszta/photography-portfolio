@@ -68,7 +68,7 @@ The **image viewer** allows users to browse images manually or use an **automati
 The portfolio is **fully responsive**, ensuring a seamless experience across different screen sizes.  
 
 <div align="center">
-  <img src="./readme/mobile_view.gif" alt="Mobile View" height="400px">
+  <img src="./readme/mobile.gif" alt="Mobile View" height="400px">
 </div>  
 
 
