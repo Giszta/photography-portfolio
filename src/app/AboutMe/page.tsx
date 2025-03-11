@@ -18,7 +18,7 @@ export default function AboutMe() {
 	}, []);
 
 	return (
-		<main className="mt-28 overflow-">
+		<main className="mt-28 pb-4">
 			<Navbar />
 			<motion.h1
 				initial={{ opacity: 0, scale: 0.5 }}
@@ -35,7 +35,7 @@ export default function AboutMe() {
 				transition={{ delay: 0.5, duration: 0.5 }}
 				className="flex justify-center items-center gap-x-20 gap-y-5 max-w-7xl m-auto mb-5 flex-wrap "
 			>
-				<span className="max-w-2xl text-justify mx-5 block indent-0.5">
+				<span className="max-w-2xl text-justify mx-5 block indent-0.5 order-2 xl:order-1">
 					<p className="indent-5">
 						Cześć! Nazywam się Romek, a fotografia turystyczna to moja wielka
 						pasja. Od wielu lat podróżuję z aparatem w ręku, uwieczniając
@@ -60,7 +60,7 @@ export default function AboutMe() {
 				</span>
 				{photos.length > 0 && (
 					<Image
-						className="max-w-md w-11/12 rounded-3xl mx-5"
+						className="max-w-md w-11/12 rounded-3xl mx-5 order-1 xl:order-2"
 						src={photos[0].url}
 						alt="About me photo"
 						width={photos[0].width || 300}
@@ -77,7 +77,7 @@ export default function AboutMe() {
 			>
 				{photos.length > 0 && (
 					<Image
-						className="max-w-md w-11/12 rounded-3xl mx-5"
+						className="max-w-md w-11/12 rounded-3xl mx-5 order-3"
 						src={photos[1].url}
 						alt="About me photo"
 						width={photos[1].width || 300}
@@ -85,7 +85,7 @@ export default function AboutMe() {
 						priority
 					/>
 				)}
-				<span className="max-w-2xl text-justify mx-5 block indent-0.5">
+				<span className="max-w-2xl text-justify mx-5 block indent-0.5 order-4">
 					<p className="indent-5">
 						Kiedy nie podróżuję, zajmuję się jazdą na rowerze i dartem. Jazda na
 						rowerze pozwala mi na eksplorowanie okolicy w spokojnym tempie,

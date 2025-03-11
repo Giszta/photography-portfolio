@@ -69,16 +69,23 @@ const homeSlideQuote = [
 	},
 ];
 
-function getRandomQuote() {
+type Quote = {
+	id: number;
+	author: string;
+	quote: string;
+};
+
+function getRandomQuote(): Quote {
 	return homeSlideQuote[Math.floor(Math.random() * homeSlideQuote.length)];
 }
 
 export default function Circles() {
-	const [randomQuote, setRandomQuote] = useState(getRandomQuote());
+	const [randomQuote, setRandomQuote] = useState<Quote | null>(null);
 
 	useEffect(() => {
 		setRandomQuote(getRandomQuote());
 	}, []);
+	if (!randomQuote) return null;
 	return (
 		<div className="flex justify-center items-center h-screen">
 			<AuthorCircle authorName={randomQuote.author} />

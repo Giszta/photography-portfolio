@@ -88,7 +88,7 @@ export default function Albums() {
 	};
 
 	return (
-		<main ref={ref} className="mt-28">
+		<main ref={ref} className="mt-28 pb-12">
 			<Navbar />
 			<motion.h1
 				initial={{ opacity: 0, scale: 0.5 }}
@@ -104,7 +104,7 @@ export default function Albums() {
 				transition={{ duration: 0.5 }}
 				className="flex justify-center gap-4 text-white pb-10"
 			>
-				<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+				<div className="grid grid-cols-2 lg:grid-cols-4 gap-4 ">
 					{sortedTags.map((buttonTag) => (
 						<AlbumFilterButton
 							key={buttonTag}
