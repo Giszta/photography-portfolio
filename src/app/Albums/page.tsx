@@ -65,13 +65,8 @@ export default function Albums() {
 		"Europa",
 		"Polska",
 		...arrayOfUniqueTags.filter(
-			(tag) =>
-				tag !== "Wszystkie" &&
-				tag !== "Europa" &&
-				tag !== "Polska" &&
-				tag !== "Inne"
+			(tag) => tag !== "Wszystkie" && tag !== "Europa" && tag !== "Polska"
 		),
-		"Inne",
 	];
 
 	const ref = useRef(null);

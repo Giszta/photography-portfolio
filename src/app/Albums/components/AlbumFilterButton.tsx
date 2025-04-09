@@ -11,14 +11,26 @@ const AlbumFilterButton = ({
 	onClick,
 	isSelected,
 }: AlbumFilterButtonType) => {
-	const buttonStyles = isSelected
-		? "text-#e7e5e4 bg-black opacity-80 border-sky-500 border-4"
-		: "text-black border-slate-600  ";
-
 	return (
 		<button
+			type="button"
 			onClick={() => onClick(name)}
-			className={`font-serif max-w-[150px] w-full shadow-lg shadow-stone-500/50 border-4 hover:border-sky-500 duration-500 rounded-md px-6 py-1 text-sm lg:text-xl cursor-pointer  bg-shade ${buttonStyles}`}
+			className={`
+				relative overflow-hidden z-10
+				cursor-pointer font-serif text-sm lg:text-xl 
+				p-2 lg:px-6 lg:py-2 rounded-md border-2	 shadow-lg shadow-stone-500/50
+				transition-colors duration-300 ease-in-out
+				focus:outline-none focus:ring-2 focus:ring-sky-400
+				before:content-[''] before:absolute before:top-1/2 before:left-1/2 
+				before:-translate-x-1/2 before:-translate-y-1/2 before:rotate-45 
+				before:h-[500%] before:bg-black before:opacity-80 
+				before:transition-all before:duration-500 before:ease-in-out before:z-[-1]
+				${
+					isSelected
+						? "text-white border-sky-500 before:w-[120%]"
+						: "text-black border-slate-600 hover:text-white hover:before:w-[120%]"
+				}
+			`}
 		>
 			{name}
 		</button>
