@@ -41,10 +41,12 @@ export async function GET() {
 			});
 			nextCursor = resources.next_cursor;
 		} while (nextCursor);
+
 		const folders: Folder[] = Array.from(folderSet).map((folder) => ({
 			name: folder.split("/").slice(1).join("/"),
 			path: folder,
 		}));
+
 		return NextResponse.json(folders, {
 			headers: {
 				"Cache-Control": "no-store, max-age=0",
@@ -54,6 +56,31 @@ export async function GET() {
 		console.error("Error fetching folders from Cloudinary:", error);
 		return NextResponse.json(
 			{ error: "Failed to fetch folders" },
+			{ status: 500 }
+		);
+	}
+}
+
+export async function POST(req: Request) {
+	try {
+		const body = await req.json();
+
+		if (
+			body?.resource_type === "image" &&
+			body.public_id.startsWith("gallery/")
+		) {
+			console.log("Nowy obraz w galerii:", body.public_id);
+
+			await fetch(
+				`${process.env.NEXT_PUBLIC_SITE_URL}/api/revalidate?secret=${process.env.REVALIDATION_SECRET}`
+			);
+		}
+
+		return NextResponse.json({ success: true });
+	} catch (error) {
+		console.error("Błąd obsługi webhooka Cloudinary:", error);
+		return NextResponse.json(
+			{ error: "Błąd przetwarzania webhooka" },
 			{ status: 500 }
 		);
 	}
