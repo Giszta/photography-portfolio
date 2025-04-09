@@ -15,60 +15,85 @@ import {
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-import { fetchAlbumPhotosFromCloudinary } from "../utils/cloudinary";
-import { PhotoType } from "../utils/cloudinary";
+import {
+	fetchAlbumPhotosFromCloudinary,
+	fetchAlbumMetadataFromCloudinary,
+	AlbumMetadata,
+	PhotoType,
+} from "../utils/cloudinary";
 import AlbumsLoading from "./components/AlbumsLoading";
 
 export default function Albums() {
 	const [tag, setTag] = useState("Wszystkie");
 	const [open, setOpen] = useState(false);
 	const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState<PhotoType[]>([]);
-	const [allAlbumPhotos, setAllAlbumPhotos] = useState<PhotoType[][]>([]);
-	const [albumCover, setAlbumCover] = useState<PhotoType[]>([]);
+
+	const [albumsMetadata, setAlbumsMetadata] = useState<AlbumMetadata[]>([]);
 
 	useEffect(() => {
 		let isMounted = true;
 
-		async function getAlbums() {
-			const albums = await fetchAlbumPhotosFromCloudinary();
-			const sortedAlbums = albums
-				.filter((album) => album.length > 0 && album[0].tags.length > 0)
-				.sort((a, b) => {
-					const dateA = new Date(a[0].created_at);
-					const dateB = new Date(b[0].created_at);
-					return dateB.getTime() - dateA.getTime();
-				});
+		async function fetchAlbums() {
+			const res = await fetch("/api/getFolders");
+			const folders = await res.json();
+
+			const metadata: AlbumMetadata[] = await Promise.all(
+				folders.map(async (folder: { name: string; path: string }) => {
+					const folderName = folder.name;
+					const res = await fetch(
+						`/api/getPhotos/${folderName}?coverOnly=true`
+					);
+					const photos = await res.json();
+					const cover = photos[0];
+					return {
+						title: folderName,
+						folder: folderName,
+						coverUrl: cover?.url,
+						tags: cover?.tags ?? [],
+						created_at: cover?.created_at ?? "",
+					};
+				})
+			);
 
 			if (isMounted) {
-				setAllAlbumPhotos(sortedAlbums);
-				const covers = sortedAlbums.map((album) => album[0]);
-				setAlbumCover(covers);
+				setAlbumsMetadata(
+					metadata
+						.filter((album) => album.coverUrl)
+						.sort(
+							(a, b) =>
+								new Date(b.created_at).getTime() -
+								new Date(a.created_at).getTime()
+						)
+				);
 			}
 		}
-		getAlbums();
+
+		fetchAlbums();
 		return () => {
 			isMounted = false;
 		};
 	}, []);
 
-	const filteredAlbums = allAlbumPhotos.filter(
-		(album) => tag === "Wszystkie" || album[0].tags.includes(tag)
+	const uniqueTags = Array.from(
+		new Set(albumsMetadata.flatMap((album) => album.tags))
+	);
+
+	const sortedTags = [
+		"Wszystkie",
+		"Europa",
+		"Polska",
+		...uniqueTags.filter(
+			(tag) => !["Wszystkie", "Europa", "Polska"].includes(tag)
+		),
+	];
+
+	const filteredAlbums = albumsMetadata.filter(
+		(album) => tag === "Wszystkie" || album.tags.includes(tag)
 	);
 
 	const handleTagChange = (newTag: string) => {
 		setTag(newTag);
 	};
-
-	const arrayOfTags = albumCover.map((album) => album.tags);
-	const arrayOfUniqueTags = Array.from(new Set(arrayOfTags.flat()));
-	const sortedTags = [
-		"Wszystkie",
-		"Europa",
-		"Polska",
-		...arrayOfUniqueTags.filter(
-			(tag) => tag !== "Wszystkie" && tag !== "Europa" && tag !== "Polska"
-		),
-	];
 
 	const ref = useRef(null);
 	const isInView = useInView(ref, { once: true });
@@ -78,8 +103,10 @@ export default function Albums() {
 		animate: { y: 0, opacity: 1 },
 	};
 
-	const handleAlbumClick = (albumPhotos: PhotoType[]) => {
-		setCurrentAlbumPhotos(albumPhotos);
+	const handleAlbumClick = async (folder: string) => {
+		const res = await fetch(`/api/getPhotos/${folder}`);
+		const photos: PhotoType[] = await res.json();
+		setCurrentAlbumPhotos(photos);
 		setOpen(true);
 	};
 
@@ -111,7 +138,7 @@ export default function Albums() {
 					))}
 				</div>
 			</motion.div>
-			{allAlbumPhotos.length === 0 ? (
+			{albumsMetadata.length === 0 ? (
 				<AlbumsLoading />
 			) : (
 				<ul
@@ -127,11 +154,11 @@ export default function Albums() {
 							transition={{ duration: 0.3, delay: index * 0.4 }}
 						>
 							<AlbumItem
-								key={album[0].title}
-								title={album[0].title}
-								src={album[0].url}
-								tags={album[0].tags}
-								onClick={() => handleAlbumClick(album)}
+								key={album.title}
+								title={album.title}
+								src={album.coverUrl}
+								tags={album.tags}
+								onClick={() => handleAlbumClick(album.folder)}
 							/>
 						</motion.li>
 					))}

@@ -5,7 +5,7 @@ interface AlbumItemType {
 	title: string;
 	src: string;
 	tags: string[];
-	onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+	onClick: () => void;
 }
 
 export default function AlbumItem({
@@ -15,7 +15,7 @@ export default function AlbumItem({
 	onClick,
 }: AlbumItemType) {
 	return (
-		<div onClick={onClick}>
+		<div onClick={onClick} className="cursor-pointer">
 			<h1 className="text-center">{title}</h1>
 			<div>
 				<div className="frames">
@@ -26,7 +26,7 @@ export default function AlbumItem({
 								src={src}
 								width={300}
 								height={300}
-								alt="Album Cover"
+								alt={`Okładka albumu ${title}`}
 								priority
 							/>
 						) : (

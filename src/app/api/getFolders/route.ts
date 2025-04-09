@@ -8,10 +8,7 @@ cloudinary.config({
 	api_key: process.env.CLOUDINARY_API_KEY,
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-interface CloudinaryResource {
-	public_id: string;
-	bytes: number;
-}
+
 interface Folder {
 	name: string;
 	path: string;
@@ -19,37 +16,16 @@ interface Folder {
 
 export async function GET() {
 	try {
-		const folderSet = new Set<string>();
-		let nextCursor: string | undefined = undefined;
-		do {
-			const resources = await cloudinary.api.resources({
-				type: "upload",
-				prefix: "gallery/",
-				max_results: 500,
-				next_cursor: nextCursor,
-			});
-			resources.resources.forEach((resource: CloudinaryResource) => {
-				if (resource.bytes > 0) {
-					const folderPath = resource.public_id
-						.split("/")
-						.slice(0, 2)
-						.join("/");
-					if (folderPath.startsWith("gallery/")) {
-						folderSet.add(folderPath);
-					}
-				}
-			});
-			nextCursor = resources.next_cursor;
-		} while (nextCursor);
+		const result = await cloudinary.api.sub_folders("gallery");
 
-		const folders: Folder[] = Array.from(folderSet).map((folder) => ({
-			name: folder.split("/").slice(1).join("/"),
-			path: folder,
+		const folders: Folder[] = result.folders.map((folder: any) => ({
+			name: folder.name,
+			path: folder.path,
 		}));
 
 		return NextResponse.json(folders, {
 			headers: {
-				"Cache-Control": "no-store, max-age=0",
+				"Cache-Control": "public, max-age=60, stale-while-revalidate=300",
 			},
 		});
 	} catch (error) {

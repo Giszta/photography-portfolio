@@ -8,6 +8,14 @@ export interface PhotoType {
 	title: string;
 	url: string;
 	width: number;
+	folder: string;
+}
+export interface AlbumMetadata {
+	title: string;
+	folder: string;
+	coverUrl: string;
+	tags: string[];
+	created_at: string;
 }
 
 export async function fetchAlbumPhotosFromCloudinary(): Promise<PhotoType[][]> {
@@ -62,8 +70,8 @@ export async function fetchAboutMePhotosFromCloudinary(): Promise<PhotoType[]> {
 
 export async function fetchPhotosByFolder(folder: string) {
 	try {
-	const response = await fetch(`/api/getHomepagePhotos?folder=${folder}`);
-	const data = await response.json();
+		const response = await fetch(`/api/getHomepagePhotos?folder=${folder}`);
+		const data = await response.json();
 
 		if (response.ok) {
 			return data;
@@ -75,4 +83,34 @@ export async function fetchPhotosByFolder(folder: string) {
 		console.error("Error fetching photos from API:", error);
 		return [];
 	}
+}
+
+export async function fetchAlbumMetadataFromCloudinary(): Promise<
+	AlbumMetadata[]
+> {
+	const res = await fetch("/api/getFolders", {
+		cache: "no-store",
+	});
+	const folders = await res.json();
+
+	const albumMetadata: AlbumMetadata[] = await Promise.all(
+		folders.map(async (folder: { name: string; path: string }) => {
+			const folderName = folder.name;
+			const response = await fetch(
+				`/api/getPhotos/${folderName}?coverOnly=true`
+			);
+			const photos = await response.json();
+
+			const cover = photos[0];
+			return {
+				title: folderName,
+				folder: folderName,
+				coverUrl: cover?.url,
+				tags: cover?.tags ?? [],
+				created_at: cover?.created_at ?? "",
+			};
+		})
+	);
+
+	return albumMetadata.filter((album) => album.coverUrl);
 }
