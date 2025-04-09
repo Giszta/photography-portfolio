@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
+export const dynamic = "force-dynamic";
+
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 	api_key: process.env.CLOUDINARY_API_KEY,
@@ -43,7 +45,11 @@ export async function GET() {
 			name: folder.split("/").slice(1).join("/"),
 			path: folder,
 		}));
-		return NextResponse.json(folders);
+		return NextResponse.json(folders, {
+			headers: {
+				"Cache-Control": "no-store, max-age=0",
+			},
+		});
 	} catch (error) {
 		console.error("Error fetching folders from Cloudinary:", error);
 		return NextResponse.json(
