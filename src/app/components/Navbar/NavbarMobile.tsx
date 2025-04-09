@@ -1,6 +1,5 @@
 import React from "react";
 import NavbarItem from "./NavbarItem";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import EmailIcon from "../../../../public/email-icon.svg";
 import FacebookIcon from "../../../../public/facebook-icon.svg";
@@ -59,34 +58,40 @@ function NavbarMobile() {
 				transition={{ staggerChildren: 0.2, delayChildren: 0.5 }}
 			>
 				<motion.div variants={iconVariants}>
-					<Link
+					<a
 						href="https://www.shutterstock.com/pl/g/Roman+Giszter?rid=290584745"
-						passHref
+						target="_blank"
+						rel="noopener noreferrer"
 					>
 						<ShutterstockIcon
 							className="text-white w-6 h-6 hover:text-sky-500 duration-500"
 							alt="Shutterstock Icon"
 						/>
-					</Link>
+					</a>
 				</motion.div>
 				<motion.div variants={iconVariants}>
-					<Link href="https://www.instagram.com/romangiszter/" passHref>
+					<a
+						href="https://www.instagram.com/romangiszter/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						<InstagramIcon
 							className="text-white w-5 h-5 hover:text-sky-500 duration-500"
 							alt="Instagram Icon"
 						/>
-					</Link>
+					</a>
 				</motion.div>
 				<motion.div variants={iconVariants}>
-					<Link
+					<a
 						href="https://www.facebook.com/profile.php?id=100007263227928"
-						passHref
+						target="_blank"
+						rel="noopener noreferrer"
 					>
 						<FacebookIcon
 							className="text-white w-5 h-5 hover:text-sky-500 duration-500"
 							alt="Facebook Icon"
 						/>
-					</Link>
+					</a>
 				</motion.div>
 				<motion.div variants={iconVariants}>
 					<a href="mailto:kontakt@fotoroman.pl">
