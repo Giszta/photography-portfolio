@@ -27,22 +27,26 @@ export async function GET(
 ) {
 	try {
 		const { folder } = params;
+		const url = new URL(request.url);
+		const coverOnly = url.searchParams.get("coverOnly") === "true";
+
 		const photos = [];
 		let nextCursor: string | undefined = undefined;
+		const maxResults = coverOnly ? 1 : 500;
+
 		do {
 			const resources = await cloudinary.api.resources({
 				type: "upload",
 				prefix: `gallery/${folder}/`,
-				max_results: 500,
+				max_results: maxResults,
 				next_cursor: nextCursor,
 				tags: true,
 			});
+
 			photos.push(
 				...(resources.resources
 					.map((resource: CloudinaryResource) => {
-						if (resource.bytes === 0) {
-							return undefined;
-						}
+						if (resource.bytes === 0) return undefined;
 						return {
 							public_id: resource.public_id,
 							url: resource.secure_url
@@ -54,8 +58,10 @@ export async function GET(
 					})
 					.filter(Boolean) as Photo[])
 			);
+
 			nextCursor = resources.next_cursor;
-		} while (nextCursor);
+		} while (nextCursor && !coverOnly);
+
 		return NextResponse.json(photos);
 	} catch (error) {
 		console.error("Error fetching photos from Cloudinary:", error);
