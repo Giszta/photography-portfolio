@@ -3,6 +3,9 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { fetchPhotosByFolder } from "../utils/cloudinary";
 
+const LAST_PHOTOS_KEY = "lastHomeSlidePhotos";
+const HISTORY_SIZE = 5;
+
 export default function HomePhotoSlide() {
 	const [randomPhotoSrc, setRandomPhotoSrc] = useState("");
 	const [isPortrait, setIsPortrait] = useState<boolean | null>(null);
@@ -23,10 +26,7 @@ export default function HomePhotoSlide() {
 		}
 
 		window.addEventListener("resize", updateOrientation);
-
-		return () => {
-			window.removeEventListener("resize", updateOrientation);
-		};
+		return () => window.removeEventListener("resize", updateOrientation);
 	}, [isPortrait]);
 
 	useEffect(() => {
@@ -36,13 +36,15 @@ export default function HomePhotoSlide() {
 			const folder = isPortrait ? "HomeSlide/portrait" : "HomeSlide/landscape";
 			const photos = await fetchPhotosByFolder(folder);
 			if (photos.length > 0) {
-				setRandomPhotoSrc(getRandomPhoto(photos));
-			}
-		}
+				const lastPhotos = getLastPhotos();
+				const filtered = photos.filter((p) => !lastPhotos.includes(p.url));
+				const candidates = filtered.length > 0 ? filtered : photos;
+				const randomIndex = Math.floor(Math.random() * candidates.length);
+				const chosenPhoto = candidates[randomIndex].url;
 
-		function getRandomPhoto(photoList: { url: string }[]) {
-			const randomIndex = Math.floor(Math.random() * photoList.length);
-			return photoList[randomIndex].url;
+				setRandomPhotoSrc(chosenPhoto);
+				saveToLastPhotos(chosenPhoto);
+			}
 		}
 
 		loadPhotos();
@@ -52,6 +54,7 @@ export default function HomePhotoSlide() {
 		document.body.classList.add("no-scroll");
 		return () => document.body.classList.remove("no-scroll");
 	}, []);
+
 	return (
 		<div className="photo-slide fixed top-0 left-0 w-full h-full overflow-hidden -z-50 inset-0">
 			{randomPhotoSrc && (
@@ -65,4 +68,27 @@ export default function HomePhotoSlide() {
 			)}
 		</div>
 	);
+}
+
+// Pomocnicze funkcje do obsługi historii zdjęć
+function getLastPhotos(): string[] {
+	if (typeof window === "undefined") return [];
+	try {
+		const stored = localStorage.getItem(LAST_PHOTOS_KEY);
+		return stored ? JSON.parse(stored) : [];
+	} catch {
+		return [];
+	}
+}
+
+function saveToLastPhotos(url: string) {
+	if (typeof window === "undefined") return;
+	try {
+		const prev = getLastPhotos();
+		const updated = [url, ...prev.filter((item) => item !== url)].slice(
+			0,
+			HISTORY_SIZE
+		);
+		localStorage.setItem(LAST_PHOTOS_KEY, JSON.stringify(updated));
+	} catch {}
 }
