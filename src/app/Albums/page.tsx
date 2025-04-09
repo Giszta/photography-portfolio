@@ -17,6 +17,7 @@ import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { fetchAlbumPhotosFromCloudinary } from "../utils/cloudinary";
 import { PhotoType } from "../utils/cloudinary";
+import AlbumsLoading from "./components/AlbumsLoading";
 
 export default function Albums() {
 	const [tag, setTag] = useState("Wszystkie");
@@ -110,28 +111,32 @@ export default function Albums() {
 					))}
 				</div>
 			</motion.div>
-			<ul
-				key={tag}
-				className="max-w-7xl grid gap-10 grid-cols-album m-auto pl-2 pr-2"
-			>
-				{filteredAlbums.map((album, index) => (
-					<motion.li
-						key={index}
-						variants={cardVariants}
-						initial="initial"
-						animate={isInView ? "animate" : "initial"}
-						transition={{ duration: 0.3, delay: index * 0.4 }}
-					>
-						<AlbumItem
-							key={album[0].title}
-							title={album[0].title}
-							src={album[0].url}
-							tags={album[0].tags}
-							onClick={() => handleAlbumClick(album)}
-						/>
-					</motion.li>
-				))}
-			</ul>
+			{allAlbumPhotos.length === 0 ? (
+				<AlbumsLoading />
+			) : (
+				<ul
+					key={tag}
+					className="max-w-7xl grid gap-10 grid-cols-album m-auto pl-2 pr-2"
+				>
+					{filteredAlbums.map((album, index) => (
+						<motion.li
+							key={index}
+							variants={cardVariants}
+							initial="initial"
+							animate={isInView ? "animate" : "initial"}
+							transition={{ duration: 0.3, delay: index * 0.4 }}
+						>
+							<AlbumItem
+								key={album[0].title}
+								title={album[0].title}
+								src={album[0].url}
+								tags={album[0].tags}
+								onClick={() => handleAlbumClick(album)}
+							/>
+						</motion.li>
+					))}
+				</ul>
+			)}
 			<Lightbox
 				open={open}
 				close={() => setOpen(false)}
