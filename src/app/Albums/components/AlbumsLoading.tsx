@@ -15,13 +15,13 @@ export default function AlbumsLoading() {
 
 	return (
 		<div className="flex flex-col items-center justify-center h-[360px]">
-			<div className="relative w-40 h-32 bg-gray-800 rounded-md shadow-lg border-4 border-gray-700">
+			<div className="relative w-28 h-24 md:w-40 md:h-32 bg-gray-800 rounded-md shadow-lg border-4 border-gray-700">
 				{/* Główna obudowa aparatu */}
-				<div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-4 bg-gray-700 rounded-sm" />
+				<div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2 w-8 md:w-10 h-3 md:h-4 bg-gray-700 rounded-sm" />
 
 				{/* Obiektyw */}
 				<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-					<div className="relative w-20 h-20">
+					<div className="relative w-14 h-14 md:w-20 md:h-20">
 						<motion.div
 							className="absolute inset-0 bg-black rounded-full border-4 border-gray-600"
 							initial={{ scale: 0.95 }}
@@ -42,8 +42,9 @@ export default function AlbumsLoading() {
 				</div>
 
 				{/* Flash */}
-				<div className="absolute top-1 right-2 w-4 h-2 bg-yellow-300 rounded-sm shadow-md" />
+				<div className="absolute top-1 right-1 md:right-2 w-3 h-1.5 md:w-4 md:h-2 bg-yellow-300 rounded-sm shadow-md" />
 			</div>
+
 			<p className="mt-6 text-sm italic text-gray-500">
 				Wczytywanie albumów ze zdjęciami...
 			</p>
