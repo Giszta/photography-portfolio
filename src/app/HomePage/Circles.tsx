@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import AuthorCircle from "./AuthorCircle";
 import QuoteCircle from "./QuoteCircle";
 
+const LAST_QUOTES_KEY = "lastHomeQuotes";
+const HISTORY_SIZE = 5;
+
 const homeSlideQuote = [
 	{
 		id: 1,
@@ -14,7 +17,7 @@ const homeSlideQuote = [
 		id: 2,
 		author: "DeGriff",
 		quote:
-			"Zdarzają się chwile, gdy nie masz przy sobie aparatu i wówczas widzisz najwspanialszy widok ,. Nie przejmuj się , że nie możesz go sfotografować. Usiądź i rozkoszuj się tym widokiem",
+			"Gdy nie masz przy sobie aparatu i widzisz wspaniały widok. Nie przejmuj się , że nie możesz go sfotografować. Usiądź i rozkoszuj się nim.",
 	},
 	{
 		id: 3,
@@ -36,7 +39,7 @@ const homeSlideQuote = [
 	{
 		id: 6,
 		author: "Imogen Cunningham",
-		quote: "Które z moich zdjęć jest moim ulubionym ? ? To, które zrobię jutro",
+		quote: "Które z moich zdjęć jest moim ulubionym? To, które zrobię jutro",
 	},
 	{
 		id: 7,
@@ -75,21 +78,65 @@ type Quote = {
 	quote: string;
 };
 
-function getRandomQuote(): Quote {
-	return homeSlideQuote[Math.floor(Math.random() * homeSlideQuote.length)];
+interface CirclesProps {
+	fixedQuoteId?: number;
 }
 
-export default function Circles() {
+export default function Circles({ fixedQuoteId }: CirclesProps) {
 	const [randomQuote, setRandomQuote] = useState<Quote | null>(null);
 
 	useEffect(() => {
-		setRandomQuote(getRandomQuote());
-	}, []);
+		if (fixedQuoteId) {
+			const quote = homeSlideQuote.find((q) => q.id === fixedQuoteId) || null;
+			setRandomQuote(quote);
+		} else {
+			const lastQuotes = getLastQuotes();
+			const filtered = homeSlideQuote.filter(
+				(q) => !lastQuotes.includes(q.id) && q.id !== 2
+			);
+			const candidates =
+				filtered.length > 0
+					? filtered
+					: homeSlideQuote.filter((q) => q.id !== 2); // zapasowa pula, nadal bez id:2
+
+			if (candidates.length === 0) return; // 🛑 brak cytatów — nic nie rób
+
+			const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+			if (!chosen) return;
+
+			setRandomQuote(chosen);
+			saveToLastQuotes(chosen.id);
+		}
+	}, [fixedQuoteId]);
+
 	if (!randomQuote) return null;
+
 	return (
 		<div className="flex justify-center items-center h-screen">
 			<AuthorCircle authorName={randomQuote.author} />
 			<QuoteCircle quoteText={randomQuote.quote} />
 		</div>
 	);
+}
+
+function getLastQuotes(): number[] {
+	if (typeof window === "undefined") return [];
+	try {
+		const stored = localStorage.getItem(LAST_QUOTES_KEY);
+		return stored ? JSON.parse(stored) : [];
+	} catch {
+		return [];
+	}
+}
+
+function saveToLastQuotes(id: number) {
+	if (typeof window === "undefined") return;
+	try {
+		const prev = getLastQuotes();
+		const updated = [id, ...prev.filter((item) => item !== id)].slice(
+			0,
+			HISTORY_SIZE
+		);
+		localStorage.setItem(LAST_QUOTES_KEY, JSON.stringify(updated));
+	} catch {}
 }

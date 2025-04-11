@@ -6,7 +6,18 @@ import { fetchPhotosByFolder } from "../utils/cloudinary";
 const LAST_PHOTOS_KEY = "lastHomeSlidePhotos";
 const HISTORY_SIZE = 5;
 
-export default function HomePhotoSlide() {
+const ID2_MATCHING_PHOTOS = [
+	"https://res.cloudinary.com/giszta/image/upload/v1743109807/HomeSlide/landscape/wrzesien00026_qyjcqe.jpg",
+	"https://res.cloudinary.com/giszta/image/upload/v1738619920/HomeSlide/portrait/pion003_aejcbu.jpg",
+];
+
+interface HomePhotoSlideProps {
+	onPhotoSelected?: (photoUrl: string, quoteId?: number) => void;
+}
+
+export default function HomePhotoSlide({
+	onPhotoSelected,
+}: HomePhotoSlideProps) {
 	const [randomPhotoSrc, setRandomPhotoSrc] = useState("");
 	const [isPortrait, setIsPortrait] = useState<boolean | null>(null);
 
@@ -37,18 +48,26 @@ export default function HomePhotoSlide() {
 			const photos = await fetchPhotosByFolder(folder);
 			if (photos.length > 0) {
 				const lastPhotos = getLastPhotos();
-				const filtered = photos.filter((p) => !lastPhotos.includes(p.url));
+				const filtered = photos.filter(
+					(p: { url: string }) => !lastPhotos.includes(p.url)
+				);
 				const candidates = filtered.length > 0 ? filtered : photos;
+
 				const randomIndex = Math.floor(Math.random() * candidates.length);
 				const chosenPhoto = candidates[randomIndex].url;
 
 				setRandomPhotoSrc(chosenPhoto);
 				saveToLastPhotos(chosenPhoto);
+
+				const fixedQuoteId = ID2_MATCHING_PHOTOS.includes(chosenPhoto)
+					? 2
+					: undefined;
+				onPhotoSelected?.(chosenPhoto, fixedQuoteId);
 			}
 		}
 
 		loadPhotos();
-	}, [isPortrait]);
+	}, [isPortrait, onPhotoSelected]);
 
 	useEffect(() => {
 		document.body.classList.add("no-scroll");
@@ -70,7 +89,6 @@ export default function HomePhotoSlide() {
 	);
 }
 
-// Pomocnicze funkcje do obsługi historii zdjęć
 function getLastPhotos(): string[] {
 	if (typeof window === "undefined") return [];
 	try {
