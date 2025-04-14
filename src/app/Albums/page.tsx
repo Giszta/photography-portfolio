@@ -82,8 +82,9 @@ export default function Albums() {
 		"Wszystkie",
 		"Europa",
 		"Polska",
+		"Po godzinach",
 		...uniqueTags.filter(
-			(tag) => !["Wszystkie", "Europa", "Polska"].includes(tag)
+			(tag) => !["Wszystkie", "Europa", "Polska", "Po godzinach"].includes(tag)
 		),
 	];
 

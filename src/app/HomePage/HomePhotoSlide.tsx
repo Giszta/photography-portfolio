@@ -40,8 +40,10 @@ export default function HomePhotoSlide({
 		return () => window.removeEventListener("resize", updateOrientation);
 	}, [isPortrait]);
 
+	const [isLocked, setIsLocked] = useState(false);
+
 	useEffect(() => {
-		if (isPortrait === null) return;
+		if (isPortrait === null || isLocked) return;
 
 		async function loadPhotos() {
 			const folder = isPortrait ? "HomeSlide/portrait" : "HomeSlide/landscape";
@@ -56,19 +58,22 @@ export default function HomePhotoSlide({
 				const randomIndex = Math.floor(Math.random() * candidates.length);
 				const chosenPhoto = candidates[randomIndex].url;
 
+				if (ID2_MATCHING_PHOTOS.includes(chosenPhoto)) {
+					saveToLastPhotos(chosenPhoto);
+					setRandomPhotoSrc(chosenPhoto);
+					onPhotoSelected?.(chosenPhoto, 2);
+					setIsLocked(true);
+					return;
+				}
+
 				setRandomPhotoSrc(chosenPhoto);
 				saveToLastPhotos(chosenPhoto);
-
-				const fixedQuoteId = ID2_MATCHING_PHOTOS.includes(chosenPhoto)
-					? 2
-					: undefined;
-				onPhotoSelected?.(chosenPhoto, fixedQuoteId);
+				onPhotoSelected?.(chosenPhoto, undefined);
 			}
 		}
 
 		loadPhotos();
-	}, [isPortrait, onPhotoSelected]);
-
+	}, [isPortrait, isLocked, onPhotoSelected]);
 	useEffect(() => {
 		document.body.classList.add("no-scroll");
 		return () => document.body.classList.remove("no-scroll");
