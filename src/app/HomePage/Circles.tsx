@@ -97,9 +97,9 @@ export default function Circles({ fixedQuoteId }: CirclesProps) {
 			const candidates =
 				filtered.length > 0
 					? filtered
-					: homeSlideQuote.filter((q) => q.id !== 2); // zapasowa pula, nadal bez id:2
+					: homeSlideQuote.filter((q) => q.id !== 2);
 
-			if (candidates.length === 0) return; // 🛑 brak cytatów — nic nie rób
+			if (candidates.length === 0) return;
 
 			const chosen = candidates[Math.floor(Math.random() * candidates.length)];
 			if (!chosen) return;

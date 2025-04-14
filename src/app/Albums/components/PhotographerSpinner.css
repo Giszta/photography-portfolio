@@ -1,0 +1,91 @@
+.photographer-spinner-wrapper {
+	background-color: #0a0a0a;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	overflow: hidden;
+}
+
+.camera-body {
+	width: 160px;
+	height: 100px;
+	background: linear-gradient(145deg, #1e1e1e, #2c2c2c);
+	border-radius: 16px;
+	box-shadow: inset 0 0 12px #000, 0 8px 20px rgba(0, 0, 0, 0.6);
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.camera-top {
+	position: absolute;
+	top: -20px;
+	left: 30px;
+	width: 40px;
+	height: 25px;
+	background-color: #333;
+	border-radius: 6px 6px 0 0;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.lens {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background: radial-gradient(circle at 30% 30%, #3f4c5c, #1c1e22);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.6), inset 0 0 8px #222;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	animation: pulse-lens 1.5s ease-in-out infinite;
+}
+
+.lens-inner {
+	width: 24px;
+	height: 24px;
+	background: radial-gradient(circle at 40% 40%, #222, #000);
+	border-radius: 50%;
+	box-shadow: inset 0 0 4px #000;
+}
+
+@keyframes pulse-lens {
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+	}
+	50% {
+		transform: scale(1.08);
+		box-shadow: 0 0 20px rgba(147, 197, 253, 0.4);
+	}
+}
+
+.flash-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: radial-gradient(circle, white 0%, transparent 70%);
+	opacity: 1;
+	animation: flashOut 0.4s ease-out forwards;
+	z-index: 50;
+}
+
+@keyframes flashOut {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.loaded-text {
+	color: #e5e7eb;
+	font-size: 1.75rem;
+	z-index: 10;
+	font-weight: 500;
+}
