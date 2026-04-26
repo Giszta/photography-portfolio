@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+
 import { getCloudinary } from "./cloudinary.server";
 
 export interface PhotoDto {
@@ -8,6 +9,9 @@ export interface PhotoDto {
   created_at: string;
   width?: number;
   height?: number;
+  folder?: string;
+  title?: string;
+  alt?: string;
 }
 
 export interface AlbumMetadataDto {
@@ -16,6 +20,11 @@ export interface AlbumMetadataDto {
   coverUrl: string;
   tags: string[];
   created_at: string;
+}
+
+export interface GalleryManifestDto {
+  albums: AlbumMetadataDto[];
+  photosByAlbum: Record<string, PhotoDto[]>;
 }
 
 interface CloudinaryResource {
@@ -28,85 +37,166 @@ interface CloudinaryResource {
   bytes?: number;
 }
 
+interface CloudinaryResourcesResponse {
+  resources: CloudinaryResource[];
+  next_cursor?: string;
+}
+
 function optimizeUrl(url: string) {
   return url
     .replace("upload/", "upload/f_auto,q_auto/")
     .replace("http://", "https://");
 }
 
-async function fetchFolderNamesFromCloudinary() {
-  const cloudinary = getCloudinary();
-  const result = await cloudinary.api.sub_folders("gallery");
-
-  return result.folders.map((folder: { name: string; path: string }) => ({
-    name: folder.name,
-    path: folder.path,
-  }));
+function getAlbumNameFromPublicId(publicId: string) {
+  // public_id wygląda np. tak: gallery/NazwaAlbumu/zdjecie
+  const parts = publicId.split("/");
+  return parts.length >= 3 ? parts[1] : undefined;
 }
 
-async function fetchPhotosFromFolder(folder: string, coverOnly = false) {
+function isRealImageResource(resource: CloudinaryResource) {
+  // Cloudinary potrafi zwrócić placeholdery/foldery jako zasoby z bytes === 0
+  return resource.bytes !== 0;
+}
+
+async function fetchAllGalleryResourcesFromCloudinary(): Promise<PhotoDto[]> {
   const cloudinary = getCloudinary();
+
   const photos: PhotoDto[] = [];
-  let nextCursor: string | undefined = undefined;
+  let nextCursor: string | undefined;
 
   do {
-    const resources = await cloudinary.api.resources({
+    const response = (await cloudinary.api.resources({
       type: "upload",
-      prefix: `gallery/${folder}/`,
-      max_results: coverOnly ? 1 : 500,
+      prefix: "gallery/",
+      max_results: 500,
       next_cursor: nextCursor,
       tags: true,
-    });
+    })) as CloudinaryResourcesResponse;
 
-    photos.push(
-      ...(resources.resources
-        .map((resource: CloudinaryResource) => {
-          if (resource.bytes === 0) return undefined;
+    const mappedPhotos = response.resources
+      .filter(isRealImageResource)
+      .map((resource) => {
+        const folder = getAlbumNameFromPublicId(resource.public_id);
 
-          return {
-            public_id: resource.public_id,
-            url: optimizeUrl(resource.secure_url),
-            tags: resource.tags ?? [],
-            created_at: resource.created_at,
-            width: resource.width,
-            height: resource.height,
-          };
-        })
-        .filter(Boolean) as PhotoDto[]),
-    );
+        return {
+          public_id: resource.public_id,
+          url: optimizeUrl(resource.secure_url),
+          tags: resource.tags ?? [],
+          created_at: resource.created_at,
+          width: resource.width,
+          height: resource.height,
+          folder,
+          title: folder,
+          alt: folder ?? resource.public_id,
+        };
+      })
+      .filter((photo) => Boolean(photo.folder));
 
-    nextCursor = resources.next_cursor;
-  } while (nextCursor && !coverOnly);
+    photos.push(...mappedPhotos);
+
+    nextCursor = response.next_cursor;
+  } while (nextCursor);
 
   return photos;
 }
 
+async function buildGalleryManifest(): Promise<GalleryManifestDto> {
+  const photos = await fetchAllGalleryResourcesFromCloudinary();
+
+  const photosByAlbum = photos.reduce<Record<string, PhotoDto[]>>(
+    (acc, photo) => {
+      if (!photo.folder) return acc;
+
+      if (!acc[photo.folder]) {
+        acc[photo.folder] = [];
+      }
+
+      acc[photo.folder].push(photo);
+
+      return acc;
+    },
+    {},
+  );
+
+  for (const albumPhotos of Object.values(photosByAlbum)) {
+    albumPhotos.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  }
+
+  const albums = Object.entries(photosByAlbum)
+    .map(([folder, albumPhotos]) => {
+      const cover = albumPhotos[0];
+
+      return {
+        title: folder,
+        folder,
+        coverUrl: cover.url,
+        tags: cover.tags ?? [],
+        created_at: cover.created_at ?? "",
+      };
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+
+  return {
+    albums,
+    photosByAlbum,
+  };
+}
+
+export const getGalleryManifest = unstable_cache(
+  async () => buildGalleryManifest(),
+  ["cloudinary-gallery-manifest"],
+  {
+    revalidate: 3600,
+    tags: ["cloudinary-gallery"],
+  },
+);
+
+export async function getAlbumList(): Promise<AlbumMetadataDto[]> {
+  const manifest = await getGalleryManifest();
+  return manifest.albums;
+}
+
+export async function getAlbumPhotos(folder: string): Promise<PhotoDto[]> {
+  const manifest = await getGalleryManifest();
+  return manifest.photosByAlbum[folder] ?? [];
+}
+
 async function fetchAboutMePhotosFromCloudinary() {
   const cloudinary = getCloudinary();
+
   const photos: PhotoDto[] = [];
-  let nextCursor: string | undefined = undefined;
+  let nextCursor: string | undefined;
 
   do {
-    const resources = await cloudinary.api.resources({
+    const response = (await cloudinary.api.resources({
       type: "upload",
       prefix: "AboutMe/",
       max_results: 500,
       next_cursor: nextCursor,
       tags: true,
-    });
+    })) as CloudinaryResourcesResponse;
 
     photos.push(
-      ...resources.resources.map((resource: CloudinaryResource) => ({
+      ...response.resources.filter(isRealImageResource).map((resource) => ({
         public_id: resource.public_id,
         url: optimizeUrl(resource.secure_url),
         tags: resource.tags ?? [],
         created_at: resource.created_at,
         width: resource.width,
         height: resource.height,
+        alt: "About me",
+        title: "About me",
       })),
     );
 
-    nextCursor = resources.next_cursor;
+    nextCursor = response.next_cursor;
   } while (nextCursor);
 
   return photos;
@@ -115,70 +205,41 @@ async function fetchAboutMePhotosFromCloudinary() {
 async function fetchHomepagePhotosFromCloudinary(folder: string) {
   const cloudinary = getCloudinary();
 
-  const resources = await cloudinary.api.resources({
+  const response = (await cloudinary.api.resources({
     type: "upload",
     prefix: folder,
     max_results: 100,
-  });
+    tags: true,
+  })) as CloudinaryResourcesResponse;
 
-  return resources.resources.map((resource: CloudinaryResource) => ({
+  return response.resources.filter(isRealImageResource).map((resource) => ({
     public_id: resource.public_id,
     url: optimizeUrl(resource.secure_url),
-    tags: [],
-    created_at: "",
+    tags: resource.tags ?? [],
+    created_at: resource.created_at,
     width: resource.width,
     height: resource.height,
+    alt: folder,
+    title: folder,
+    folder,
   }));
 }
-
-export const getAlbumList = unstable_cache(
-  async (): Promise<AlbumMetadataDto[]> => {
-    const folders = await fetchFolderNamesFromCloudinary();
-
-    const albums = await Promise.all(
-      folders.map(async (folder: { name: string; path: string }) => {
-        const coverPhotos = await fetchPhotosFromFolder(folder.name, true);
-        const cover = coverPhotos[0];
-
-        if (!cover) return null;
-
-        return {
-          title: folder.name,
-          folder: folder.name,
-          coverUrl: cover.url,
-          tags: cover.tags ?? [],
-          created_at: cover.created_at ?? "",
-        };
-      }),
-    );
-
-    return albums
-      .filter((album): album is AlbumMetadataDto => Boolean(album))
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
-  },
-  ["albums-list"],
-  { revalidate: 3600 },
-);
-
-export const getAlbumPhotos = (folder: string) =>
-  unstable_cache(
-    async () => fetchPhotosFromFolder(folder, false),
-    ["album-photos", folder],
-    { revalidate: 3600 },
-  )();
 
 export const getAboutPhotos = unstable_cache(
   async () => fetchAboutMePhotosFromCloudinary(),
   ["about-photos"],
-  { revalidate: 3600 },
+  {
+    revalidate: 3600,
+    tags: ["cloudinary-about"],
+  },
 );
 
 export const getHomepagePhotos = (folder: string) =>
   unstable_cache(
     async () => fetchHomepagePhotosFromCloudinary(folder),
     ["home-photos", folder],
-    { revalidate: 3600 },
+    {
+      revalidate: 3600,
+      tags: ["cloudinary-home"],
+    },
   )();
