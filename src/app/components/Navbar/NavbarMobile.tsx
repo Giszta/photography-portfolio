@@ -94,7 +94,7 @@ function NavbarMobile() {
 					</a>
 				</motion.div>
 				<motion.div variants={iconVariants}>
-					<a href="mailto:kontakt@fotoroman.pl">
+					<a href="mailto:oman70@wp.pl">
 						<EmailIcon
 							className="text-white w-6 h-6 hover:text-sky-500 duration-500"
 							alt="Email Icon"
