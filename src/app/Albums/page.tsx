@@ -1,9 +1,6 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
-import Footer from "../components/Footer/Footer";
-import Navbar from "../components/Navbar/Navbar";
-import AlbumItem from "./components/AlbumItem";
-import AlbumFilterButton from "./components/AlbumFilterButton";
+
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Lightbox from "yet-another-react-lightbox";
 import {
@@ -12,63 +9,79 @@ import {
   Slideshow,
   Thumbnails,
 } from "yet-another-react-lightbox/plugins";
+
+import Footer from "../components/Footer/Footer";
+import Navbar from "../components/Navbar/Navbar";
+import AlbumItem from "./components/AlbumItem";
+import AlbumFilterButton from "./components/AlbumFilterButton";
+import AlbumsLoading from "./components/AlbumsLoading";
+
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/counter.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-import {
-  fetchAlbumPhotosFromCloudinary,
-  fetchAlbumMetadataFromCloudinary,
-  AlbumMetadata,
-  PhotoType,
-} from "../utils/cloudinary";
-import AlbumsLoading from "./components/AlbumsLoading";
+
+interface PhotoType {
+  alt?: string;
+  created_at: string;
+  height?: number;
+  public_id: string;
+  tags: string[];
+  title?: string;
+  url: string;
+  width?: number;
+  folder?: string;
+}
+
+interface AlbumMetadata {
+  title: string;
+  folder: string;
+  coverUrl: string;
+  tags: string[];
+  created_at: string;
+}
+
+const priorityTags = ["Wszystkie", "Europa", "Polska", "Po godzinach"];
 
 export default function Albums() {
   const [tag, setTag] = useState("Wszystkie");
   const [open, setOpen] = useState(false);
   const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState<PhotoType[]>([]);
-
   const [albumsMetadata, setAlbumsMetadata] = useState<AlbumMetadata[]>([]);
+  const [isLoadingAlbums, setIsLoadingAlbums] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchAlbums() {
-      const res = await fetch("/api/getFolders");
-      const folders = await res.json();
+      try {
+        setIsLoadingAlbums(true);
 
-      const metadata: AlbumMetadata[] = await Promise.all(
-        folders.map(async (folder: { name: string; path: string }) => {
-          const folderName = folder.name;
-          const res = await fetch(
-            `/api/getPhotos/${folderName}?coverOnly=true`,
-          );
-          const photos = await res.json();
-          const cover = photos[0];
-          return {
-            title: folderName,
-            folder: folderName,
-            coverUrl: cover?.url,
-            tags: cover?.tags ?? [],
-            created_at: cover?.created_at ?? "",
-          };
-        }),
-      );
+        const response = await fetch("/api/albums");
 
-      if (isMounted) {
-        setAlbumsMetadata(
-          metadata
-            .filter((album) => album.coverUrl)
-            .sort(
-              (a, b) =>
-                new Date(b.created_at).getTime() -
-                new Date(a.created_at).getTime(),
-            ),
-        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch albums");
+        }
+
+        const metadata: AlbumMetadata[] = await response.json();
+
+        if (isMounted) {
+          setAlbumsMetadata(metadata.filter((album) => album.coverUrl));
+        }
+      } catch (error) {
+        console.error("Error fetching albums:", error);
+
+        if (isMounted) {
+          setAlbumsMetadata([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingAlbums(false);
+        }
       }
     }
 
     fetchAlbums();
+
     return () => {
       isMounted = false;
     };
@@ -79,13 +92,8 @@ export default function Albums() {
   );
 
   const sortedTags = [
-    "Wszystkie",
-    "Europa",
-    "Polska",
-    "Po godzinach",
-    ...uniqueTags.filter(
-      (tag) => !["Wszystkie", "Europa", "Polska", "Po godzinach"].includes(tag),
-    ),
+    ...priorityTags,
+    ...uniqueTags.filter((tag) => !priorityTags.includes(tag)),
   ];
 
   const filteredAlbums = albumsMetadata.filter(
@@ -105,15 +113,27 @@ export default function Albums() {
   };
 
   const handleAlbumClick = async (folder: string) => {
-    const res = await fetch(`/api/getPhotos/${folder}`);
-    const photos: PhotoType[] = await res.json();
-    setCurrentAlbumPhotos(photos);
-    setOpen(true);
+    try {
+      const response = await fetch(`/api/albums/${encodeURIComponent(folder)}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch photos for album: ${folder}`);
+      }
+
+      const photos: PhotoType[] = await response.json();
+
+      setCurrentAlbumPhotos(photos);
+      setOpen(true);
+    } catch (error) {
+      console.error("Error fetching album photos:", error);
+      setCurrentAlbumPhotos([]);
+    }
   };
 
   return (
     <main ref={ref} className="mt-28 pb-12">
       <Navbar />
+
       <motion.h1
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -122,13 +142,14 @@ export default function Albums() {
       >
         Galeria Zdjęć
       </motion.h1>
+
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="flex justify-center gap-4 text-white pb-10"
       >
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 ">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {sortedTags.map((buttonTag) => (
             <AlbumFilterButton
               key={buttonTag}
@@ -139,7 +160,8 @@ export default function Albums() {
           ))}
         </div>
       </motion.div>
-      {albumsMetadata.length === 0 ? (
+
+      {isLoadingAlbums ? (
         <AlbumsLoading />
       ) : (
         <ul
@@ -148,14 +170,13 @@ export default function Albums() {
         >
           {filteredAlbums.map((album, index) => (
             <motion.li
-              key={index}
+              key={album.folder}
               variants={cardVariants}
               initial="initial"
               animate={isInView ? "animate" : "initial"}
               transition={{ duration: 0.3, delay: index * 0.4 }}
             >
               <AlbumItem
-                key={album.title}
                 title={album.title}
                 src={album.coverUrl}
                 tags={album.tags}
@@ -165,6 +186,7 @@ export default function Albums() {
           ))}
         </ul>
       )}
+
       <Lightbox
         open={open}
         close={() => setOpen(false)}
@@ -175,6 +197,7 @@ export default function Albums() {
           showToggle: true,
         }}
       />
+
       <Footer />
     </main>
   );
