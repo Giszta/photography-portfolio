@@ -49,13 +49,12 @@ function optimizeUrl(url: string) {
 }
 
 function getAlbumNameFromPublicId(publicId: string) {
-  // public_id wygląda np. tak: gallery/NazwaAlbumu/zdjecie
+  // np. gallery/Warszawa/zdjecie
   const parts = publicId.split("/");
   return parts.length >= 3 ? parts[1] : undefined;
 }
 
 function isRealImageResource(resource: CloudinaryResource) {
-  // Cloudinary potrafi zwrócić placeholdery/foldery jako zasoby z bytes === 0
   return resource.bytes !== 0;
 }
 
@@ -87,7 +86,7 @@ async function fetchAllGalleryResourcesFromCloudinary(): Promise<PhotoDto[]> {
           width: resource.width,
           height: resource.height,
           folder,
-          title: folder,
+          title: folder ?? resource.public_id,
           alt: folder ?? resource.public_id,
         };
       })
@@ -151,7 +150,7 @@ async function buildGalleryManifest(): Promise<GalleryManifestDto> {
 
 export const getGalleryManifest = unstable_cache(
   async () => buildGalleryManifest(),
-  ["cloudinary-gallery-manifest"],
+  ["cloudinary-gallery-manifest-v2"],
   {
     revalidate: 3600,
     tags: ["cloudinary-gallery"],
@@ -227,7 +226,7 @@ async function fetchHomepagePhotosFromCloudinary(folder: string) {
 
 export const getAboutPhotos = unstable_cache(
   async () => fetchAboutMePhotosFromCloudinary(),
-  ["about-photos"],
+  ["about-photos-v2"],
   {
     revalidate: 3600,
     tags: ["cloudinary-about"],
@@ -237,7 +236,7 @@ export const getAboutPhotos = unstable_cache(
 export const getHomepagePhotos = (folder: string) =>
   unstable_cache(
     async () => fetchHomepagePhotosFromCloudinary(folder),
-    ["home-photos", folder],
+    ["home-photos-v2", folder],
     {
       revalidate: 3600,
       tags: ["cloudinary-home"],
