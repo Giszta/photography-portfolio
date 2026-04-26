@@ -17,46 +17,36 @@ function isAuthorized(request: Request) {
   return headerSecret === expectedSecret || querySecret === expectedSecret;
 }
 
+function revalidateCloudinaryCache() {
+  revalidateTag("cloudinary-gallery");
+  revalidateTag("cloudinary-about");
+  revalidateTag("cloudinary-home");
+
+  revalidatePath("/");
+  revalidatePath("/Albums");
+  revalidatePath("/AboutMe");
+}
+
 export async function POST(request: Request) {
   try {
     if (!isAuthorized(request)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
+    let body: unknown = null;
 
-    const publicId = body?.public_id as string | undefined;
-    const resourceType = body?.resource_type as string | undefined;
-
-    if (resourceType === "image" && publicId?.startsWith("gallery/")) {
-      revalidateTag("cloudinary-gallery");
-      revalidatePath("/Albums");
-
-      return NextResponse.json({
-        success: true,
-        revalidated: "gallery",
-        public_id: publicId,
-      });
+    try {
+      body = await request.json();
+    } catch {
+      body = null;
     }
 
-    if (resourceType === "image" && publicId?.startsWith("AboutMe/")) {
-      revalidateTag("cloudinary-about");
-      revalidatePath("/AboutMe");
-
-      return NextResponse.json({
-        success: true,
-        revalidated: "about",
-        public_id: publicId,
-      });
-    }
-
-    revalidateTag("cloudinary-home");
-    revalidatePath("/");
+    revalidateCloudinaryCache();
 
     return NextResponse.json({
       success: true,
-      revalidated: "home",
-      public_id: publicId ?? null,
+      revalidated: true,
+      body,
     });
   } catch (error) {
     console.error("Cloudinary webhook error:", error);

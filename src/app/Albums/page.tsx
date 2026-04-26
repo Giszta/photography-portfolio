@@ -65,7 +65,15 @@ export default function Albums() {
         const metadata: AlbumMetadata[] = await response.json();
 
         if (isMounted) {
-          setAlbumsMetadata(metadata.filter((album) => album.coverUrl));
+          setAlbumsMetadata(
+            metadata
+              .filter((album) => album.coverUrl)
+              .sort(
+                (a, b) =>
+                  new Date(b.created_at).getTime() -
+                  new Date(a.created_at).getTime(),
+              ),
+          );
         }
       } catch (error) {
         console.error("Error fetching albums:", error);
@@ -88,7 +96,7 @@ export default function Albums() {
   }, []);
 
   const uniqueTags = Array.from(
-    new Set(albumsMetadata.flatMap((album) => album.tags)),
+    new Set(albumsMetadata.flatMap((album) => album.tags ?? [])),
   );
 
   const sortedTags = [
@@ -122,11 +130,16 @@ export default function Albums() {
 
       const photos: PhotoType[] = await response.json();
 
+      if (!Array.isArray(photos)) {
+        throw new Error("Album photos response is not an array");
+      }
+
       setCurrentAlbumPhotos(photos);
-      setOpen(true);
+      setOpen(photos.length > 0);
     } catch (error) {
       console.error("Error fetching album photos:", error);
       setCurrentAlbumPhotos([]);
+      setOpen(false);
     }
   };
 
@@ -190,7 +203,10 @@ export default function Albums() {
       <Lightbox
         open={open}
         close={() => setOpen(false)}
-        slides={currentAlbumPhotos.map((photo) => ({ src: photo.url }))}
+        slides={currentAlbumPhotos.map((photo) => ({
+          src: photo.url,
+          alt: photo.alt ?? photo.title ?? photo.public_id,
+        }))}
         plugins={[Counter, Fullscreen, Slideshow, Thumbnails]}
         counter={{ container: { style: { top: "unset", bottom: 0 } } }}
         thumbnails={{
