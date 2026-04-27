@@ -49,9 +49,24 @@ function optimizeUrl(url: string) {
 }
 
 function getAlbumNameFromPublicId(publicId: string) {
-  // np. gallery/Warszawa/zdjecie
+  // np. gallery/Warszawa/001-zdjecie
   const parts = publicId.split("/");
   return parts.length >= 3 ? parts[1] : undefined;
+}
+
+function getPhotoFileNameFromPublicId(publicId: string) {
+  const parts = publicId.split("/");
+  return parts[parts.length - 1] ?? publicId;
+}
+
+function sortPhotosAlphabetically(a: PhotoDto, b: PhotoDto) {
+  const aName = getPhotoFileNameFromPublicId(a.public_id);
+  const bName = getPhotoFileNameFromPublicId(b.public_id);
+
+  return aName.localeCompare(bName, "pl", {
+    numeric: true,
+    sensitivity: "base",
+  });
 }
 
 function isRealImageResource(resource: CloudinaryResource) {
@@ -119,10 +134,7 @@ async function buildGalleryManifest(): Promise<GalleryManifestDto> {
   );
 
   for (const albumPhotos of Object.values(photosByAlbum)) {
-    albumPhotos.sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
+    albumPhotos.sort(sortPhotosAlphabetically);
   }
 
   const albums = Object.entries(photosByAlbum)
@@ -150,7 +162,7 @@ async function buildGalleryManifest(): Promise<GalleryManifestDto> {
 
 export const getGalleryManifest = unstable_cache(
   async () => buildGalleryManifest(),
-  ["cloudinary-gallery-manifest-v2"],
+  ["cloudinary-gallery-manifest-v3"],
   {
     revalidate: 3600,
     tags: ["cloudinary-gallery"],

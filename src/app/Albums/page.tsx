@@ -210,7 +210,14 @@ export default function Albums() {
       ) : (
         <ul
           key={tag}
-          className="max-w-7xl grid gap-10 grid-cols-album m-auto pl-2 pr-2"
+          className="mx-auto
+            grid
+            max-w-7xl
+            justify-center
+            gap-10
+            px-2
+            [grid-template-columns:repeat(auto-fill,minmax(350px,350px))]
+            max-[420px]:[grid-template-columns:minmax(0,1fr)]"
         >
           {visibleAlbums.map((album) => (
             <motion.li
