@@ -48,6 +48,7 @@ export default function Albums() {
   const [currentAlbumPhotos, setCurrentAlbumPhotos] = useState<PhotoType[]>([]);
   const [albumsMetadata, setAlbumsMetadata] = useState<AlbumMetadata[]>([]);
   const [isLoadingAlbums, setIsLoadingAlbums] = useState(true);
+  const [visibleAlbumsCount, setVisibleAlbumsCount] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -107,6 +108,36 @@ export default function Albums() {
   const filteredAlbums = albumsMetadata.filter(
     (album) => tag === "Wszystkie" || album.tags.includes(tag),
   );
+
+  const visibleAlbums = filteredAlbums.slice(0, visibleAlbumsCount);
+
+  useEffect(() => {
+    if (isLoadingAlbums) {
+      setVisibleAlbumsCount(0);
+      return;
+    }
+
+    setVisibleAlbumsCount(0);
+
+    if (filteredAlbums.length === 0) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setVisibleAlbumsCount((currentCount) => {
+        if (currentCount >= filteredAlbums.length) {
+          window.clearInterval(interval);
+          return currentCount;
+        }
+
+        return currentCount + 1;
+      });
+    }, 180);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [tag, isLoadingAlbums, filteredAlbums.length]);
 
   const handleTagChange = (newTag: string) => {
     setTag(newTag);
@@ -179,15 +210,22 @@ export default function Albums() {
       ) : (
         <ul
           key={tag}
-          className="max-w-7xl grid gap-10 grid-cols-album m-auto pl-2 pr-2"
+          className="mx-auto
+            grid
+            max-w-7xl
+            justify-center
+            gap-10
+            px-2
+            [grid-template-columns:repeat(auto-fill,minmax(350px,350px))]
+            max-[420px]:[grid-template-columns:minmax(0,1fr)]"
         >
-          {filteredAlbums.map((album, index) => (
+          {visibleAlbums.map((album) => (
             <motion.li
               key={album.folder}
               variants={cardVariants}
               initial="initial"
               animate={isInView ? "animate" : "initial"}
-              transition={{ duration: 0.3, delay: index * 0.4 }}
+              transition={{ duration: 0.3 }}
             >
               <AlbumItem
                 title={album.title}
